@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
 import 'package:spotifyfirebase/uihelper.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
@@ -59,24 +57,15 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     audioPlayer.seek(Duration(seconds: value.toInt()));
   }
 
+  Future<void> playaudio(String url) async{
+    await audioPlayer.play(UrlSource(url));
+  }
+
   @override
   void dispose() {
     audioPlayer.dispose();
     super.dispose();
   }
-  // Future<void> fetchMusic() async {
-  //   // you can replace your api link with this link
-  //   final response = await http.get(Uri.parse('https://spotify-api-gold.vercel.app/spotify/getmusics'));
-  //   if (response.statusCode == 200) {
-  //     List<dynamic> jsonData = json.decode(response.body);
-  //     setState(() {
-  //       Music = jsonData.map((data) => Musics.fromJson(data)).toList();
-  //       log("Here"+Music.toString());
-  //     });
-  //   } else {
-  //     // Handle error if needed
-  //   }
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -211,10 +200,11 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                       if (_isPlaying) {
                         await audioPlayer.pause();
                       } else {
+                        playaudio("https://audio.jukehost.co.uk/mTW6Jny08UUQSbpEdB1IHCREEPNZgHY8");
                         // await audioPlayer.play(NetworkSource(""));
                         // log(Music[0].toString());
                         // log(playModel);
-                        await audioPlayer.play(AssetSource('audio/song.mp3'));
+                        // await audioPlayer.play(AssetSource('audio/song.mp3'));
                       }
                     },
                   ),
