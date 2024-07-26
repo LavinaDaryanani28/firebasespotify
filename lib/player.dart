@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:spotifyfirebase/uihelper.dart';
@@ -28,6 +29,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void initState() {
     super.initState();
+    log("init");
+    getItem();
     audioPlayer.onPlayerStateChanged.listen((state) {
       setState(() {
         _isPlaying = state == PlayerState.playing;
@@ -200,7 +203,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                       if (_isPlaying) {
                         await audioPlayer.pause();
                       } else {
-                        playaudio("https://audio.jukehost.co.uk/mTW6Jny08UUQSbpEdB1IHCREEPNZgHY8");
+                        playaudio("https://audio.jukehost.co.uk/VGbs8JV3KFkeNQlZrvlK1TYUiemabBUa");
                         // await audioPlayer.play(NetworkSource(""));
                         // log(Music[0].toString());
                         // log(playModel);
@@ -223,12 +226,21 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                   ),
                 ],
               ),
-
             ],
           ),
         ),
       ),
       backgroundColor: Colors.black,
     );
+  }
+
+  Future getItem()async{
+    String documentid = "BXFj7yvqhxNnJ8Tu9YNx";
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection("trial").get();
+    for(int i=0 ; i<querySnapshot.docs.length; i++){
+      // print(querySnapshot);
+      var a=querySnapshot.docs[i];
+      log("hello "+a["artist"]);
+    }
   }
 }
