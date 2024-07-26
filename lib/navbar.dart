@@ -2,11 +2,10 @@ import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:spotifyfirebase/home.dart';
+import 'package:spotifyfirebase/library.dart';
 import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/settings.dart';
-
-import 'home.dart';
-import 'library.dart';
 
 class NavBar extends StatefulWidget {
   const NavBar({super.key});

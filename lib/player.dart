@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:spotifyfirebase/uihelper.dart';
@@ -16,6 +17,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   Duration position = Duration.zero;
   bool isRepeat = false;
   Color color = Colors.white;
+  List data=[];
   // String formatTime(int seconds) {
   //   return '${(Duration(seconds: seconds))}'.split('.')[0].padLeft(8, '0');
   // }
@@ -47,7 +49,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         position = newPosition;
       });
     });
-    // fetchMusic();
+    fetchMusic();
     // Load the audio file to get its duration - Changed by Abhay
     audioPlayer.setSource(AssetSource('audio/song.mp3'));
 
@@ -65,6 +67,13 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   void dispose() {
     audioPlayer.dispose();
     super.dispose();
+  }
+  Future<void> fetchMusic() async {
+    log("hey");
+    QuerySnapshot querySnapshot=await FirebaseFirestore.instance.collection("trial").get();
+    data=querySnapshot.docs.map((doc)=>doc.data()).toList();
+    log(data.toString());
+    log(data[0]['songname']);
   }
   @override
   Widget build(BuildContext context) {
