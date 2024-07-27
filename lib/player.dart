@@ -51,7 +51,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         position = newPosition;
       });
     });
-    fetchMusic();
+    // fetchMusic();
     // Load the audio file to get its duration - Changed by Abhay
     audioPlayer.setSource(AssetSource('audio/song.mp3'));
 
@@ -75,7 +75,6 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     QuerySnapshot querySnapshot=await FirebaseFirestore.instance.collection("trial").get();
     data=querySnapshot.docs.map((doc)=>doc.data()).toList();
     log(data.toString());
-    log(data[0]['songname']);
   }
   @override
   Widget build(BuildContext context) {
@@ -116,7 +115,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   UiHelper.customText(
-                    "Tu hi tu",
+                    data[0]['songname'],
                     color: Colors.white,
                     fontweight: FontWeight.bold,
                     fontsize: 30,
