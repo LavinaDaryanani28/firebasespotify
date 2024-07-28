@@ -88,4 +88,5 @@ class DefaultFirebaseOptions {
     databaseURL: 'https://spotify-620d8-default-rtdb.asia-southeast1.firebasedatabase.app',
     storageBucket: 'spotify-620d8.appspot.com',
   );
+
 }
