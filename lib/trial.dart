@@ -6,12 +6,12 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
-class AudioPlayerWidget extends StatefulWidget {
+class trial extends StatefulWidget {
   @override
   _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
 }
 
-class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
+class _AudioPlayerWidgetState extends State<trial> {
   final audioPlayer = AudioPlayer();
   bool _isPlaying = false;
   Duration duration = Duration.zero;
@@ -53,7 +53,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         position = newPosition;
       });
     });
-    fetchMusic();
+    // fetchMusic();
     // Load the audio file to get its duration - Changed by Abhay
     audioPlayer.setSource(AssetSource('audio/song.mp3'));
 
@@ -89,6 +89,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
             itemBuilder: (_, i) {
               // final data = docs[i].data();
               final data = docs[i].data()! as Map<String, dynamic>;
+              // var a=snapshot.data!.docs[i];
+              log(data['songname']);
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
@@ -125,7 +127,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           UiHelper.customText(
-                            data[i]['songname'],
+                            data['songname'],
                             color: Colors.white,
                             fontweight: FontWeight.bold,
                             fontsize: 30,
