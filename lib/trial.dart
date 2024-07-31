@@ -6,6 +6,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
+import 'Song.dart';
+
 class trial extends StatefulWidget {
   @override
   _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
@@ -19,6 +21,7 @@ class _AudioPlayerWidgetState extends State<trial> {
   bool isRepeat = false;
   Color color = Colors.white;
   List data=[];
+
   // String formatTime(int seconds) {
   //   return '${(Duration(seconds: seconds))}'.split('.')[0].padLeft(8, '0');
   // }
@@ -233,8 +236,9 @@ class _AudioPlayerWidgetState extends State<trial> {
                           IconButton(
                             icon:
                             Icon(Icons.skip_next, color: Colors.white, size: 40),
-                            onPressed: () async {
+                            onPressed: ()  {
                               // audioPlayer.setPlaybackRate();
+                              // playNextSong();
                             },
                           ),
                           IconButton(

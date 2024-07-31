@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:get/get.dart';
+import 'package:spotifyfirebase/musicPlayer.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
@@ -12,15 +13,15 @@ class AudioPlayerWidget extends StatefulWidget {
 }
 
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
-  final audioPlayer = AudioPlayer();
+  // final audioPlayer = AudioPlayer()
   bool _isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
   bool isRepeat = false;
-  Color color = Colors.white;
   List data=[];
-  bool isNext=false;
-  bool isPrev=false;
+  final MusicPlayer _musicPlayer=MusicPlayer();
+  bool _isShuffled = false;
+
   // String formatTime(int seconds) {
   //   return '${(Duration(seconds: seconds))}'.split('.')[0].padLeft(8, '0');
   // }
@@ -34,240 +35,254 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   void initState() {
     super.initState();
     log("init");
-    // getItem();
-
-    audioPlayer.onPlayerStateChanged.listen((state) {
+    _musicPlayer.initialize().then((_){
+      setState(() {
+        // _musicPlayer.audioPlayer.setSource(UrlSource(_musicPlayer.songs[_musicPlayer.currentIndex].url));
+      });
+    });
+    _musicPlayer.audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        _isPlaying = false;
+        position = Duration.zero;
+      });
+    });
+    _musicPlayer.audioPlayer.onPlayerStateChanged.listen((state) {
       setState(() {
         _isPlaying = state == PlayerState.playing;
       });
     });
 
     // Listener for duration changes
-    audioPlayer.onDurationChanged.listen((newDuration) {
+    _musicPlayer.audioPlayer.onDurationChanged.listen((newDuration) {
       setState(() {
         duration = newDuration;
       });
     });
 
     // Listener for position changes
-    audioPlayer.onPositionChanged.listen((newPosition) {
+    _musicPlayer.audioPlayer.onPositionChanged.listen((newPosition) {
       setState(() {
         position = newPosition;
       });
     });
-    // fetchMusic();
-    // Load the audio file to get its duration - Changed by Abhay
-    audioPlayer.setSource(AssetSource('audio/song.mp3'));
-
   }
-
-  void handleSeek(double value) {
-    audioPlayer.seek(Duration(seconds: value.toInt()));
+  void _togglePlayPause() async {
+    if (_isPlaying) {
+      await _musicPlayer.pauseCurrentSong();
+      setState(() {
+        _isPlaying=false;
+      });
+    } else {
+      await _musicPlayer.playCurrentSong();
+      setState(() {
+        _isPlaying=true;
+      });
+    }
+    // setState(() {
+    //   _isPlaying = !_isPlaying;
+    // });
   }
-
-  Future<void> playaudio(String url) async{
-    await audioPlayer.play(UrlSource(url));
+  void _toggleShuffle() {
+    setState(() {
+      if (_isShuffled) {
+        _musicPlayer.unshuffleSongs();
+      } else {
+        _musicPlayer.shuffleSongs();
+      }
+      _isShuffled = !_isShuffled;
+    });
   }
+  void _seekToPosition(double value) async {
+    final newposition = Duration(seconds: value.toInt());
+    await _musicPlayer.audioPlayer.seek(newposition);
+    setState(() {
+      position = newposition;
+    });
 
+    // Ensure playback starts if paused
+    if (!_isPlaying) {
+      await _musicPlayer.audioPlayer.resume();
+      setState(() {
+        _isPlaying = true;
+      });
+    }
+  }
+  void _cycleRepeatMode() {
+    setState(() {
+      switch (_musicPlayer.repeatMode) {
+        case RepeatMode.noRepeat:
+          _musicPlayer.setRepeatMode(RepeatMode.repeatOne);
+          break;
+        case RepeatMode.repeatOne:
+          _musicPlayer.setRepeatMode(RepeatMode.repeatAll);
+          break;
+        case RepeatMode.repeatAll:
+          _musicPlayer.setRepeatMode(RepeatMode.noRepeat);
+          break;
+      }
+    });
+    }
   @override
   void dispose() {
-    audioPlayer.dispose();
+    _musicPlayer.dispose();
     super.dispose();
-  }
-  Future<void> fetchMusic() async {
-    log("hey");
-    QuerySnapshot querySnapshot=await FirebaseFirestore.instance.collection("trial").get();
-    data=querySnapshot.docs.map((doc)=>doc.data()).toList();
-    log(data.toString());
   }
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection("trial").snapshots(),
-      builder: (BuildContext context,AsyncSnapshot<QuerySnapshot> snapshot){
-        if(!snapshot.hasData) return Text("Loading");
-        final docs = snapshot.data!.docs;
-        return ListView.builder(
-          itemCount:1,
-          itemBuilder: (_, i) {
-            var data=docs[i].data()! as Map<String, dynamic>;
-            if(isNext){
-              i=i+1;
-              docs[i].data()! as Map<String, dynamic>;
-            }
-            else if(isPrev){
-              i=i-1;
-              docs[i].data()! as Map<String, dynamic>;
-            }
-            // var data;
-            // isNext?data = docs[i+1].data()! as Map<String, dynamic>:data = docs[i].data()! as Map<String, dynamic>;
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        UiHelper.iconBtn(30, callback: () {
-                          Navigator.pop(context);
-                        },
-                            icondata: Icons.keyboard_arrow_down_sharp,
-                            color: Colors.white),
-                        UiHelper.iconBtn(25,
-                            icondata: Icons.menu, color: Colors.white),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        data['photo'],
-                        width: double.infinity,
-                        height: 350,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        UiHelper.customText(
-                          data['songname'],
-                          color: Colors.white,
-                          fontweight: FontWeight.bold,
-                          fontsize: 30,
-                        ),
-                        UiHelper.iconBtn(30,
-                            icondata: Icons.add_circle_outline_outlined,
-                            color: Colors.white),
-                      ],
-                    ),
-                    Slider(
-                      min: 0,
-                      max: duration.inSeconds.toDouble(),
-                      value: position.inSeconds.toDouble(),
-                      onChanged: (value) async {
-                        final position = Duration(seconds: value.toInt());
-                        audioPlayer.seek(position);
-                        audioPlayer.resume();
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
+    return Scaffold(
+      body: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
+                  child: Column(
+                    children: [
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          UiHelper.customText(formatDuration(position),
+                          UiHelper.iconBtn(30, callback: () {
+                            Navigator.pop(context);
+                          },
+                              icondata: Icons.keyboard_arrow_down_sharp,
                               color: Colors.white),
-                          UiHelper.customText(formatDuration(duration - position),
+                          UiHelper.iconBtn(25,
+                              icondata: Icons.menu, color: Colors.white),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(
+                          _musicPlayer.songs[_musicPlayer.currentIndex].photo,
+                          width: double.infinity,
+                          height: 350,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          UiHelper.customText(
+                            _musicPlayer.songs[_musicPlayer.currentIndex].name,
+                            color: Colors.white,
+                            fontweight: FontWeight.bold,
+                            fontsize: 30,
+                          ),
+                          UiHelper.iconBtn(30,
+                              icondata: Icons.add_circle_outline_outlined,
                               color: Colors.white),
                         ],
                       ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        UiHelper.iconBtn(
-                          30,
-                          icondata: Icons.repeat,
-                          color: color,
-                          callback: () async {
-                            if (isRepeat == false) {
-                              audioPlayer.setReleaseMode(ReleaseMode.loop);
-                              setState(() {
-                                isRepeat = true;
-                                color = Colors.green;
-                              });
-                            } else if (isRepeat == true) {
-                              setState(() {
-                                isRepeat = false;
-                                color = Colors.white;
-                              });
-                            }
-                          },
+                      Slider(
+                        value: position.inSeconds.toDouble(),
+                        min: 0.0,
+                        max: duration.inSeconds.toDouble(),
+                        onChanged: (value) {
+                          setState(() {
+                            position = Duration(seconds: value.toInt());
+                          });
+                        },
+                        onChangeEnd: _seekToPosition,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            UiHelper.customText("${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}",
+                                color: Colors.white),
+                            UiHelper.customText("${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}",
+                                color: Colors.white),
+                          ],
                         ),
-                        // IconButton(
-                        //   icon:Icon(Icons.repeat,color: color,size: 30),
-                        //   onPressed: () async{
-                        //     if(isRepeat==false){
-                        //       audioPlayer.setReleaseMode(ReleaseMode.loop);
-                        //       setState(() {
-                        //         isRepeat=true;
-                        //         color=Colors.green;
-                        //       });
-                        //     }
-                        //     else if(isRepeat==true)
-                        //     {
-                        //       setState(() {
-                        //         isRepeat=false;
-                        //         color=Colors.white;
-                        //       });
-                        //     }
-                        //   },
-                        // ),
-                        IconButton(
-                          icon: Icon(Icons.skip_previous,
-                              color: Colors.white, size: 40),
-                          onPressed: () async {
-                            isPrev=true;
-                            data = docs[i-1].data()! as Map<String, dynamic>;
-                            // log(data['songname']);
-                            audioPlayer.pause();
-                            playaudio(data['link']);
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            _isPlaying ? Icons.pause_circle : Icons.play_circle,
-                            color: Colors.white,
-                            size: 70,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          UiHelper.iconBtn(
+                            30,
+                            icondata: _musicPlayer.repeatMode==RepeatMode.repeatOne?Icons.repeat_one:Icons.repeat,
+                            color: _musicPlayer.repeatMode==RepeatMode.noRepeat?Colors.white:Colors.green,
+                            callback: _cycleRepeatMode
                           ),
-                          onPressed: () async {
-                            if (_isPlaying) {
-                              await audioPlayer.pause();
-                            } else {
-                              playaudio(data['link']);
-                              // await audioPlayer.play(NetworkSource(""));
-                              // log(Music[0].toString());
-                              // log(playModel);
-                              // await audioPlayer.play(AssetSource('audio/song.mp3'));
-                            }
-                          },
-                        ),
-                        IconButton(
-                          icon:
-                          Icon(Icons.skip_next, color: Colors.white, size: 40),
-                          onPressed: () async {
-                            isNext=true;
-                            data = docs[i+1].data()! as Map<String, dynamic>;
-                            // log(data['songname']);
-                            audioPlayer.pause();
-                            playaudio(data['link']);
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.shuffle, color: Colors.white, size: 30),
-                          onPressed: () async {
-                            // audioPlayer.setPlaybackRate();
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
+                          // IconButton(
+                          //   icon:Icon(Icons.repeat,color: color,size: 30),
+                          //   onPressed: () async{
+                          //     if(isRepeat==false){
+                          //       audioPlayer.setReleaseMode(ReleaseMode.loop);
+                          //       setState(() {
+                          //         isRepeat=true;
+                          //         color=Colors.green;
+                          //       });
+                          //     }
+                          //     else if(isRepeat==true)
+                          //     {
+                          //       setState(() {
+                          //         isRepeat=false;
+                          //         color=Colors.white;
+                          //       });
+                          //     }
+                          //   },
+                          // ),
+                          IconButton(
+                            icon: Icon(Icons.skip_previous,
+                                color: Colors.white, size: 40),
+                            onPressed: () async{
+                              await _musicPlayer.playPrevSong();
+                              setState(() {
+                                _isPlaying = true;
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              _isPlaying ? Icons.pause_circle : Icons.play_circle,
+                              color: Colors.white,
+                              size: 70,
+                            ),
+                            onPressed: _togglePlayPause,
+                            // onPressed: () async {
+
+                              // if (_isPlaying) {
+                              //   await audioPlayer.pause();
+                              // } else {
+                              //   playaudio(_musicPlayer.songs[_musicPlayer.currentIndex].url);
+                              //   // _musicPlayer.playCurrentSong();
+                              //   // await audioPlayer.play(NetworkSource(""));
+                              //   // log(Music[0].toString());
+                              //   // log(playModel);
+                              //   // await audioPlayer.play(AssetSource('audio/song.mp3'));
+                              // }
+                            // },
+                          ),
+                          IconButton(
+                            icon:
+                            Icon(Icons.skip_next, color: Colors.white, size: 40),
+                            onPressed: () {
+                              _musicPlayer.playNextSong().then((_) {
+                                setState(() {
+                                  _isPlaying=true;
+                                }); // Update UI after playing next song
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.shuffle, color: _isShuffled?Colors.green:Colors.white, size: 30),
+                            onPressed:_toggleShuffle,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            );
-          },
-        );
-      },
+      backgroundColor: Colors.black,
     );
   }
 

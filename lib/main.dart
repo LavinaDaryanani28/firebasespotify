@@ -1,7 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:spotifyfirebase/player.dart';
+import 'package:spotifyfirebase/playtrial.dart';
 import 'package:spotifyfirebase/splashscreen.dart';
+import 'package:spotifyfirebase/trial.dart';
 
 import 'firebase_options.dart';
 import 'home.dart';
@@ -29,7 +32,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: NavBar(),
+        home: SplashScreen2(),
       ),
     );
   }
