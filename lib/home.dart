@@ -11,6 +11,18 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool isPlayerOpened = false;
+  String greetings() {
+    DateTime now = DateTime.now();
+    int hours = now.hour;
+
+    if (hours < 12)
+      return "Morning";
+    else if (hours < 13)
+      return "Noon";
+    else if (hours < 16) return "Afternoon";
+    return "Evening";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +36,7 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  UiHelper.customText("Good Morning!",
+                  UiHelper.customText("Good "+greetings(),
                       color: Colors.white,
                       fontsize: 30,
                       fontweight: FontWeight.bold),

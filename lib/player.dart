@@ -19,6 +19,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   bool isRepeat = false;
   Color color = Colors.white;
   List data=[];
+  bool isNext=false;
+  bool isPrev=false;
   // String formatTime(int seconds) {
   //   return '${(Duration(seconds: seconds))}'.split('.')[0].padLeft(8, '0');
   // }
@@ -86,8 +88,19 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         if(!snapshot.hasData) return Text("Loading");
         final docs = snapshot.data!.docs;
         return ListView.builder(
+          itemCount:1,
           itemBuilder: (_, i) {
-            final data = docs[i].data()! as Map<String, dynamic>;
+            var data=docs[i].data()! as Map<String, dynamic>;
+            if(isNext){
+              i=i+1;
+              docs[i].data()! as Map<String, dynamic>;
+            }
+            else if(isPrev){
+              i=i-1;
+              docs[i].data()! as Map<String, dynamic>;
+            }
+            // var data;
+            // isNext?data = docs[i+1].data()! as Map<String, dynamic>:data = docs[i].data()! as Map<String, dynamic>;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
@@ -204,9 +217,11 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                           icon: Icon(Icons.skip_previous,
                               color: Colors.white, size: 40),
                           onPressed: () async {
-                            await audioPlayer.pause();
-                            await audioPlayer.seek(Duration(seconds: 10));
-                            await audioPlayer.resume();
+                            isPrev=true;
+                            data = docs[i-1].data()! as Map<String, dynamic>;
+                            // log(data['songname']);
+                            audioPlayer.pause();
+                            playaudio(data['link']);
                           },
                         ),
                         IconButton(
@@ -231,7 +246,11 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                           icon:
                           Icon(Icons.skip_next, color: Colors.white, size: 40),
                           onPressed: () async {
-                            // audioPlayer.setPlaybackRate();
+                            isNext=true;
+                            data = docs[i+1].data()! as Map<String, dynamic>;
+                            // log(data['songname']);
+                            audioPlayer.pause();
+                            playaudio(data['link']);
                           },
                         ),
                         IconButton(
