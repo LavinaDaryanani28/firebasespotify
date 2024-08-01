@@ -32,7 +32,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
     log("init");
     _musicPlayer.initialize().then((_){
@@ -129,7 +129,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _musicPlayer.songs.isEmpty ? Container() :Scaffold(
       body: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
