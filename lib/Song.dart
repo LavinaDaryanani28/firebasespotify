@@ -5,13 +5,15 @@ class Song{
   final String name;
   final String url;
   final String photo;
-  Song({required this.id,required this.name,required this.url,required this.photo});
+  final String artist;
+  Song({required this.id,required this.name,required this.url,required this.photo,required this.artist});
   factory Song.fromDocument(DocumentSnapshot doc){
     return Song(
       id:doc.id,
       name: doc['songname'],
       url:doc['link'],
       photo: doc['photo'],
+      artist:doc['artist']
     );
   }
 }

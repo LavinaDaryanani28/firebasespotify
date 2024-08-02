@@ -5,6 +5,7 @@ import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/playtrial.dart';
 import 'package:spotifyfirebase/splashscreen.dart';
 import 'package:spotifyfirebase/trial.dart';
+import 'package:spotifyfirebase/trial2.dart';
 
 import 'firebase_options.dart';
 import 'home.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: SplashScreen2(),
+        home: Trial2(),
       ),
     );
   }

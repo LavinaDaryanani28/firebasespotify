@@ -34,7 +34,6 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void initState(){
     super.initState();
-    log("init");
     _musicPlayer.initialize().then((_){
       setState(() {
         // _musicPlayer.audioPlayer.setSource(UrlSource(_musicPlayer.songs[_musicPlayer.currentIndex].url));
@@ -129,6 +128,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
   @override
   Widget build(BuildContext context) {
+    log(_musicPlayer.songs.length.toString());
     return _musicPlayer.songs.isEmpty ? Container() :Scaffold(
       body: SingleChildScrollView(
                 child: Padding(
@@ -156,7 +156,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                           _musicPlayer.songs[_musicPlayer.currentIndex].photo,
                           width: double.infinity,
                           height: 350,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                         ),
                       ),
                       SizedBox(
