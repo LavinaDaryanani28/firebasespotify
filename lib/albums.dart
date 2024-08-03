@@ -7,74 +7,73 @@ import 'package:spotifyfirebase/uihelper.dart';
 
 import 'artist.dart';
 
-
 double _appTopBarHeight = 40;
 String AlbumName = 'Arijit Singh';
 
 var arrContent = [
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
 ];
 
-final borderside = BorderSide(color: Colors.white,width: 2);
+final borderside = BorderSide(color: Colors.white, width: 2);
 
 class Album extends StatelessWidget {
   const Album({super.key});
@@ -92,10 +91,11 @@ class Album extends StatelessWidget {
               pinned: true,
             ),
             SliverList(
-              delegate:SliverChildBuilderDelegate(
-                    (BuildContext context, int index) {
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 10),
                     child: Row(
                       children: [
                         UiHelper.customButton("About",
@@ -106,26 +106,26 @@ class Album extends StatelessWidget {
                             forecolor: Colors.white,
                             side: 1.0,
                             sidecolor: Colors.white, callback: () {
-                              showModalBottomSheet<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Container(
-                                      height: 350,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                              "https://i.scdn.co/image/ab6761610000e5eb0261696c5df3be99da6ed3f3"),
-                                          fit: BoxFit.cover,
-                                        ),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(16.0),
-                                          topRight: Radius.circular(16.0),
-                                        ),
-                                      ),
-                                    );
-                                  });
-                            }),
+                          showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Container(
+                                  height: 350,
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                          "https://i.scdn.co/image/ab6761610000e5eb0261696c5df3be99da6ed3f3"),
+                                      fit: BoxFit.cover,
+                                    ),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(16.0),
+                                      topRight: Radius.circular(16.0),
+                                    ),
+                                  ),
+                                );
+                              });
+                        }),
                         SizedBox(
                           width: 10,
                         ),
@@ -136,37 +136,43 @@ class Album extends StatelessWidget {
                             bgcolor: Colors.transparent,
                             forecolor: Colors.white,
                             side: 1.0,
-                            sidecolor: Colors.white,
-                            callback: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Artist()));
-                            }),
+                            sidecolor: Colors.white, callback: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Artist()));
+                        }),
                       ],
                     ),
                   );
                 },
-                childCount: 1, // SliverList displaying 20 items, each on a ListTile
+                childCount:
+                    1, // SliverList displaying 20 items, each on a ListTile
               ),
-
             ),
             SliverGrid(
               delegate: SliverChildBuilderDelegate(
-                    (context, index) {
+                (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 10),
                     child: Container(
                       alignment: Alignment.center,
                       color: Colors.black,
                       child: Column(
                         children: [
-                          IconButton(onPressed: (){}, icon: Image.network("https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg")),
+                          IconButton(
+                              onPressed: () {},
+                              icon: Image.network(
+                                  "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg")),
                           // UiHelper.iconBtn(30,imagePath:  "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
                           // Image.network(
                           //     "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
                           //   ),
-                          UiHelper.customText(arrContent[index]["songname"].toString(),                         color: Colors.white, fontsize: 20),
+                          UiHelper.customText(
+                              arrContent[index]["songname"].toString(),
+                              color: Colors.white,
+                              fontsize: 20),
                         ],
                       ),
                     ),
@@ -177,7 +183,7 @@ class Album extends StatelessWidget {
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 // mainAxisSpacing: 0.1,
-                crossAxisSpacing: 10,//for size of whole box
+                crossAxisSpacing: 10, //for size of whole box
                 // childAspectRatio: 1.1,
               ),
             ),
@@ -295,20 +301,19 @@ class Album extends StatelessWidget {
 
 class MyDelegate extends SliverPersistentHeaderDelegate {
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     var shrinkPercentage =
-    min(1, shrinkOffset / (maxExtent - minExtent)).toDouble();
+        min(1, shrinkOffset / (maxExtent - minExtent)).toDouble();
 
     return Stack(
       clipBehavior: Clip.hardEdge,
       fit: StackFit.expand,
       children: [
-
         //how top bar will change while scrolling the screen
         Container(
           // flex: 1,
-          child:
-          Stack(
+          child: Stack(
             children: [
               Container(
                 color: Colors.black,
@@ -320,11 +325,12 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                 child: Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                        fit: BoxFit.fitWidth,
-                        alignment: FractionalOffset.topCenter,
-                        image: NetworkImage(
-                          'https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg',),
-                      )),
+                    fit: BoxFit.fitWidth,
+                    alignment: FractionalOffset.topCenter,
+                    image: NetworkImage(
+                      'https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg',
+                    ),
+                  )),
                 ),
               ),
             ],
@@ -350,10 +356,14 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                       child: Row(
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          IconButton(onPressed: (){Navigator.of(context).pop();}, icon: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          )),
+                          IconButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                              )),
                           SizedBox(
                             width: 20,
                           ),
@@ -361,7 +371,10 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           //   child:
                           Opacity(
                             opacity: shrinkPercentage,
-                            child: UiHelper.customText(AlbumName,fontweight: FontWeight.bold,fontsize: 20,color: Colors.white),
+                            child: UiHelper.customText(AlbumName,
+                                fontweight: FontWeight.bold,
+                                fontsize: 20,
+                                color: Colors.white),
                           ),
                           // ),
                         ],
@@ -375,7 +388,10 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     child: Column(
                       children: [
                         SizedBox(height: 70),
-                        UiHelper.customText(AlbumName,fontweight: FontWeight.bold,fontsize: 60,color: Colors.white),
+                        UiHelper.customText(AlbumName,
+                            fontweight: FontWeight.bold,
+                            fontsize: 60,
+                            color: Colors.white),
                       ],
                     ),
                   )

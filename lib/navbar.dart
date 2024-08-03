@@ -7,6 +7,8 @@ import 'package:spotifyfirebase/library.dart';
 import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/settings.dart';
 
+import 'musicPlayer.dart';
+
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
 
@@ -17,14 +19,18 @@ class NavBar extends StatefulWidget {
 class _NavigationbarState extends State<NavBar> {
   final audioPlayer=AudioPlayer();
   bool _isPlaying = false;
-  @override
+  final MusicPlayer _musicPlayer=MusicPlayer();
+
   int _currentIndex = 0;
   Duration duration=Duration.zero;
   Duration position=Duration.zero;
   bool isRepeat=false;
   Color color=Colors.white;
+  @override
   void initState() {
     super.initState();
+    _initializeMusicPlayer();
+
     audioPlayer.onPlayerStateChanged.listen((state) {
       setState(() {
         _isPlaying = state == PlayerState.playing;
@@ -48,6 +54,12 @@ class _NavigationbarState extends State<NavBar> {
     // Load the audio file to get its duration - Changed by Abhay
     audioPlayer.setSource(AssetSource('audio/song.mp3'));
   }
+
+  Future<void> _initializeMusicPlayer() async {
+    await _musicPlayer.initialize();
+    log(_musicPlayer.songs.length.toString());
+  }
+
   void dispose() {
     audioPlayer.dispose();
     super.dispose();

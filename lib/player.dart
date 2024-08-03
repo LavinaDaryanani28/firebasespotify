@@ -34,6 +34,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void initState(){
     super.initState();
+    // log(_musicPlayer.songs.length.toString());
     _musicPlayer.initialize().then((_){
       setState(() {
         // _musicPlayer.audioPlayer.setSource(UrlSource(_musicPlayer.songs[_musicPlayer.currentIndex].url));
