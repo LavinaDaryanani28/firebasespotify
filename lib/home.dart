@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  UiHelper.customText("Good "+greetings(),
+                  UiHelper.customText("Good "+ greetings(),
                       color: Colors.white,
                       fontsize: 30,
                       fontweight: FontWeight.bold),

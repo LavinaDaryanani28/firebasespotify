@@ -1,15 +1,24 @@
 import 'dart:math';
-
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
+import 'package:spotifyfirebase/MiniPlayerWidget.dart';
+import 'package:spotifyfirebase/MusicPlayerWidget.dart';
 import 'package:spotifyfirebase/Song.dart';
+import 'package:spotifyfirebase/player.dart';
 
 enum RepeatMode {
   noRepeat,
   repeatOne,
   repeatAll,
 }
+class MusicPlayer extends StatefulWidget {
+  const MusicPlayer({super.key});
 
-class MusicPlayer{
+  @override
+  State<MusicPlayer> createState() => _MusicPlayerState();
+}
+
+class _MusicPlayerState extends State<MusicPlayer> {
   final AudioPlayer _audioPlayer=AudioPlayer();
   List<Song> _songs=[];
   int _currentIndex=0;
@@ -18,9 +27,61 @@ class MusicPlayer{
   int get currentIndex=>_currentIndex;
   List<Song> _shuffledSongs = [];
   bool _isShuffled = false;
+  bool _isPlaying = false;
   RepeatMode get repeatMode => _repeatMode;
+  Duration position = Duration.zero;
+  Duration duration = Duration.zero;
+  @override
+  void initState() {
+    super.initState();
+    _initializeMusicPlayer();
+  }
+  Future<void> _handleSongCompletion() async {
+    await playNextSong();
+  }
+  Future<void> _initializeMusicPlayer() async {
+    _songs = await fetchSongs();
+    _shuffledSongs = List.from(_songs);
+
+    _audioPlayer.onPositionChanged.listen((newposition) {
+      setState(() {
+        position = newposition;
+      });
+    });
+
+    _audioPlayer.onDurationChanged.listen((newduration) {
+      setState(() {
+        duration = newduration;
+      });
+    });
+
+    _audioPlayer.onPlayerComplete.listen((event) async {
+      await _handleSongCompletion();
+    });
+
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        _isPlaying = state == PlayerState.playing;
+      });
+    });
+
+    setState(() {});
+  }
   Future<void> initialize() async{
     _songs=await fetchSongs();
+  }
+  void _seekToPosition(Duration position) async {
+    await _audioPlayer.seek(position);
+    setState(() {
+      position = position;
+    });
+
+    if (!_isPlaying) {
+      await _audioPlayer.resume();
+      setState(() {
+        _isPlaying = true;
+      });
+    }
   }
   Future<void> playCurrentSong() async{
     if(_songs.isNotEmpty){
@@ -83,4 +144,44 @@ class MusicPlayer{
     _audioPlayer.dispose();
   }
   AudioPlayer get audioPlayer => _audioPlayer;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(child: MusicPlayerWidget(
+            songs:_isShuffled?_shuffledSongs:_songs,
+        currentIndex: _currentIndex,
+        isPlaying: _isPlaying,
+        position: position,
+        duration: duration,
+        onPlayPauseToggle: () {
+          if (_isPlaying) {
+            pauseCurrentSong();
+          } else {
+            playCurrentSong();
+          }
+        },
+        onNext: playNextSong,
+        onPrevious: playPrevSong,
+        onSeek: _seekToPosition,
+      ),
+          ),
+          MiniPlayerWidget(
+            songTitle: _isShuffled
+                ? _shuffledSongs[_currentIndex].name
+                : _songs[_currentIndex].name,
+            isPlaying: _isPlaying,
+            onPlayPauseToggle: () {
+              if (_isPlaying) {
+                pauseCurrentSong();
+              } else {
+                playCurrentSong();
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
 }

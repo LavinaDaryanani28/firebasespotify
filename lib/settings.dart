@@ -3,14 +3,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotifyfirebase/signup.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class Setting extends StatefulWidget {
+  const Setting({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<Setting> createState() => _SettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _SettingsState extends State<Setting> {
   bool isSwitched = false;
 
   void _toggleSwitch(bool value) {

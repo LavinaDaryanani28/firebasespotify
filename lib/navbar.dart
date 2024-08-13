@@ -1,12 +1,22 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:spotifyfirebase/MiniPlayerWidget.dart';
+import 'package:spotifyfirebase/MusicPlayerWidget.dart';
 import 'package:spotifyfirebase/home.dart';
 import 'package:spotifyfirebase/library.dart';
 import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/settings.dart';
 
+import 'Song.dart';
+enum RepeatMode {
+  noRepeat,
+  repeatOne,
+  repeatAll,
+}
 class NavBar extends StatefulWidget {
   const NavBar({super.key});
 
@@ -15,47 +25,178 @@ class NavBar extends StatefulWidget {
 }
 
 class _NavigationbarState extends State<NavBar> {
-  final audioPlayer=AudioPlayer();
+  final AudioPlayer _audioPlayer=AudioPlayer();
+  List<Song> _songs = [];
+  List<Song> _shuffledSongs = [];
   bool _isPlaying = false;
+  bool _isShuffled = false;
   @override
   int _currentIndex = 0;
+  // int get currentIndex=>_currentIndex;
+  RepeatMode _repeatMode = RepeatMode.noRepeat;
+  List<Song> get songs => _isShuffled ? _shuffledSongs : _songs;
+  int _selectedIndex = 0;
   Duration duration=Duration.zero;
   Duration position=Duration.zero;
   bool isRepeat=false;
   Color color=Colors.white;
   void initState() {
     super.initState();
-    audioPlayer.onPlayerStateChanged.listen((state) {
+    _initializeMusicPlayer();
+    // Load the audio file to get its duration - Changed by Abhay
+    // audioPlayer.setSource(AssetSource('audio/song.mp3'));
+  }
+  Future<void> _handleSongCompletion() async {
+    await playNextSong();
+  }
+  Future<void> _initializeMusicPlayer() async {
+    _songs = await _fetchSongs();
+    _shuffledSongs = List.from(_songs);
+
+    _audioPlayer.onPositionChanged.listen((newposition) {
+      setState(() {
+        position = newposition;
+      });
+    });
+
+    _audioPlayer.onDurationChanged.listen((newduration) {
+      setState(() {
+        duration = newduration;
+      });
+    });
+
+    _audioPlayer.onPlayerComplete.listen((event) async {
+      await _handleSongCompletion();
+    });
+
+    _audioPlayer.onPlayerStateChanged.listen((state) {
       setState(() {
         _isPlaying = state == PlayerState.playing;
       });
     });
 
-    // Listener for duration changes
-    audioPlayer.onDurationChanged.listen((newDuration) {
-      setState(() {
-        duration = newDuration;
-      });
+    setState(() {});
+  }
+  Future<List<Song>> _fetchSongs() async {
+    final snapshot = await FirebaseFirestore.instance.collection('songs').get();
+    return snapshot.docs.map((doc) => Song.fromDocument(doc)).toList();
+  }
+  // Future<void> initialize() async{
+  //   _songs=await fetchSongs();
+  // }
+  void _seekToPosition(Duration newposition) async {
+    await _audioPlayer.seek(newposition);
+    setState(() {
+      position = newposition;
     });
 
-    // Listener for position changes
-    audioPlayer.onPositionChanged.listen((newPosition) {
+    if (!_isPlaying) {
+      await _audioPlayer.resume();
       setState(() {
-        position = newPosition;
+        _isPlaying = true;
       });
+    }
+  }
+  Future<void> playCurrentSong() async{
+    if (_songs.isNotEmpty) {
+      final song = _isShuffled ? _shuffledSongs[_currentIndex] : _songs[_currentIndex];
+      await _audioPlayer.play(UrlSource(song.url));
+      setState(() {
+        _isPlaying = true;
+      });
+    }
+  }
+  Future<void> pauseCurrentSong() async {
+    await _audioPlayer.pause();
+    setState(() {
+      _isPlaying = false;
     });
+  }
 
-    // Load the audio file to get its duration - Changed by Abhay
-    audioPlayer.setSource(AssetSource('audio/song.mp3'));
+  Future<void> stopCurrentSong() async {
+    await _audioPlayer.stop();
   }
-  void dispose() {
-    audioPlayer.dispose();
-    super.dispose();
+  Future<void> playPrevSong() async{
+    if (_songs.isNotEmpty) {
+      await _audioPlayer.stop(); // Stop the current song
+      _currentIndex = (_currentIndex - 1) % _songs.length;
+      if (_currentIndex < 0) {
+        _currentIndex = _songs.length - 1; // Wrap around to the last song
+      }
+      await playCurrentSong(); // Play the previous song
+    }
   }
+  Future<void> playNextSong() async{
+    if (songs.isNotEmpty) {
+      await _audioPlayer.stop(); // Stop the current song
+      if (_repeatMode == RepeatMode.repeatOne) {
+        await playCurrentSong(); // Play the same song again
+      } else {
+        _currentIndex = (_currentIndex + 1) % songs.length;
+        if (_currentIndex == 0 && _repeatMode == RepeatMode.noRepeat) {
+          await stopCurrentSong(); // Stop if no repeat mode and end of playlist
+        } else {
+          await playCurrentSong(); // Play the next song
+        }
+      }
+    }
+  }
+  void shuffleSongs() {
+    if (_songs.isNotEmpty) {
+      final currentSong = songs[_currentIndex];
+      _shuffledSongs = List.from(_songs);
+      _shuffledSongs.remove(currentSong);
+      _shuffledSongs.shuffle(Random());
+      _shuffledSongs.insert(0, currentSong); // Keep the current song at the first position
+      _isShuffled = true;
+    }
+  }
+
+  void unshuffleSongs() {
+    _isShuffled = false;
+    _currentIndex = _songs.indexOf(_shuffledSongs[_currentIndex]);
+  }
+
+  void setRepeatMode(RepeatMode mode) {
+    _repeatMode = mode;
+  }
+  void dispose(){
+    _audioPlayer.dispose();
+  }
+
   String formatDuration(Duration d){
     final min=d.inMinutes.remainder(60);
     final sec=d.inSeconds.remainder(60);
     return "${min.toString().padLeft(2,'0')}:${sec.toString().padLeft(2,'0')}";
+  }
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+  void _openMusicPlayer(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MusicPlayerWidget(
+          songs: _isShuffled ? _shuffledSongs : _songs,
+          currentIndex: _currentIndex,
+          isPlaying: _isPlaying,
+          position: position,
+          duration: duration,
+          onPlayPauseToggle: () {
+            if (_isPlaying) {
+              pauseCurrentSong();
+            } else {
+              playCurrentSong();
+            }
+          },
+          onNext: playNextSong,
+          onPrevious: playPrevSong,
+          onSeek: _seekToPosition,
+        ),
+      ),
+    );
   }
   Widget miniPlayer(){
     return AnimatedContainer(
@@ -66,61 +207,74 @@ class _NavigationbarState extends State<NavBar> {
       child:
       GestureDetector(
         onTap: (){
+          _openMusicPlayer(context);
           // Navigator.push(context, MaterialPageRoute(builder: (context)=>AudioPlayerWidget()));
-          showModalBottomSheet<void>(context: context, isScrollControlled:true,backgroundColor: Colors.black,builder: (BuildContext context) {
-            return AudioPlayerWidget();
-          });
+          // showModalBottomSheet<void>(context: context, isScrollControlled:true,backgroundColor: Colors.black,builder: (BuildContext context) {
+          //   return
+          // });
         },
         child:
         // Hero(
         // tag: "page",
         // child:
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-
-            Image.network("https://i.scdn.co/image/ab67616d0000b273ba5db46f4b838ef6027e6f96",fit: BoxFit.cover,),
-            Text("Song A",style: TextStyle(color: Colors.white),),
-            IconButton(
-              icon:Icon(_isPlaying?Icons.pause:Icons.play_arrow,color:Colors.white,size: 30,),
-              onPressed: () async{
-                if(_isPlaying){
-                  await audioPlayer.pause();
-                }
-                else{
-                  await audioPlayer.play(AssetSource('audio/song.mp3'));
-                }
-              },
-            )
-          ],
-        ),
+        _selectedIndex!=3?
+        MiniPlayerWidget(
+          songTitle: _isShuffled
+              ? _shuffledSongs[_currentIndex].name
+              : _songs[_currentIndex].name,
+          isPlaying: _isPlaying,
+          onPlayPauseToggle: () {
+            if (_isPlaying) {
+              pauseCurrentSong();
+            } else {
+              playCurrentSong();
+            }
+          },
+        ):null
         // ),
       ),
 
     );
   }
-  final List<Widget> _screens = [
-    Home(),
-    Library(),
-    Settings(),
-  ];
+
+
   Widget build(BuildContext context) {
+    List<Widget> _pages = [
+      Home(),
+      Library(),
+      Setting(),
+      // MusicPlayerWidget(
+      //   songs: _isShuffled ? _shuffledSongs : _songs,
+      //   currentIndex: _currentIndex,
+      //   isPlaying: _isPlaying,
+      //   position: position,
+      //   duration: duration,
+      //   onPlayPauseToggle: () {
+      //     if (_isPlaying) {
+      //       pauseCurrentSong();
+      //     } else {
+      //       playCurrentSong();
+      //     }
+      //   },
+      //   onNext: playNextSong,
+      //   onPrevious: playPrevSong,
+      //   onSeek: _seekToPosition,
+      // ),
+    ];
+
     return Scaffold(
-      body: _screens[_currentIndex],
+      body: _pages[_selectedIndex],
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           miniPlayer(),
+          // MiniPlayerWidget(),
           BottomNavigationBar(
             unselectedLabelStyle: const TextStyle(color: Colors.white, fontSize: 14),
             fixedColor: Colors.white,
             unselectedItemColor: Colors.white,
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
             items: [
               BottomNavigationBarItem(
                 icon: Icon(Icons.home,color: Colors.white,size: 30,),
@@ -137,6 +291,7 @@ class _NavigationbarState extends State<NavBar> {
             ],
             backgroundColor: Colors.black,
           ),
+
         ],
       ),
     );
