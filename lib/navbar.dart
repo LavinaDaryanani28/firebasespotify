@@ -40,6 +40,25 @@ class _NavigationbarState extends State<NavBar> {
   Duration position=Duration.zero;
   bool isRepeat=false;
   Color color=Colors.white;
+  bool isPlayingGlobal = false;
+
+  void togglePlayPauseGlobal(bool newState) {
+    setState(() {
+      isPlayingGlobal = newState;
+    });
+    if (isPlayingGlobal) {
+      pauseCurrentSong();
+
+    } else {
+      // playaudio(songs[currentIndex].url);
+      playCurrentSong();
+      // await audioPlayer.play(NetworkSource(""));
+      // log(Music[0].toString());
+      // log(playModel);
+      // await audioPlayer.play(AssetSource('audio/song.mp3'));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -186,13 +205,14 @@ class _NavigationbarState extends State<NavBar> {
           isPlaying: _isPlaying,
           position: position,
           duration: duration,
-          onPlayPauseToggle: ()  async{
+          onPlayPauseToggle: ()  {
 
             if (_isPlaying) {
-             await pauseCurrentSong();
+             pauseCurrentSong();
+
             } else {
               // playaudio(songs[currentIndex].url);
-              await playCurrentSong();
+              playCurrentSong();
               // await audioPlayer.play(NetworkSource(""));
               // log(Music[0].toString());
               // log(playModel);
@@ -202,6 +222,8 @@ class _NavigationbarState extends State<NavBar> {
           onNext: playNextSong,
           onPrevious: playPrevSong,
           onSeek: _seekToPosition,
+              isPlayingGlobal: isPlayingGlobal,
+              togglePlayPauseGlobal: togglePlayPauseGlobal,
         ),
       ),
     );
@@ -301,8 +323,14 @@ class _NavigationbarState extends State<NavBar> {
               onPlayPauseToggle: () {
                   if (_isPlaying) {
                     pauseCurrentSong();
+                    // setState(() {
+                    //   _isPlaying=false;
+                    // });
                   } else {
                     playCurrentSong();
+                    // setState(() {
+                    //   _isPlaying=true;
+                    // });
                   }
               },
               onTap: () {

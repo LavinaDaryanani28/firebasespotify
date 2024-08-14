@@ -21,6 +21,8 @@ class MusicPlayerWidget extends StatefulWidget{
   final VoidCallback onNext;
   final VoidCallback onPrevious;
   final ValueChanged<Duration> onSeek;
+  final bool isPlayingGlobal;
+  final Function(bool) togglePlayPauseGlobal;
   // final bool isShuffle;
   // final VoidCallback onShuffle;
   MusicPlayerWidget({
@@ -32,7 +34,7 @@ class MusicPlayerWidget extends StatefulWidget{
     required this.onPlayPauseToggle,
     required this.onNext,
     required this.onPrevious,
-    required this.onSeek,
+    required this.onSeek, required this.isPlayingGlobal, required this.togglePlayPauseGlobal,
     // required this.isShuffle,
     // required this.onShuffle
   });
@@ -42,6 +44,19 @@ class MusicPlayerWidget extends StatefulWidget{
 }
 
 class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
+  late bool isPlayingLocal;
+  @override
+  void initState() {
+    super.initState();
+    isPlayingLocal = widget.isPlayingGlobal;
+  }
+
+  void togglePlayPauseLocal() {
+    setState(() {
+      isPlayingLocal = !isPlayingLocal;
+    });
+    widget.togglePlayPauseGlobal(isPlayingLocal);
+  }
   @override
   Widget build(BuildContext context) {
     return widget.songs.isEmpty ? Container(child: Text("No data"),) :Scaffold(
@@ -181,13 +196,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                   ),
                   IconButton(
                     icon: Icon(
+                      isPlayingLocal? Icons.play_circle: Icons.pause_circle ,
                       // _isPlaying ? Icons.pause_circle : Icons.play_circle,
-                      widget.isPlaying ? Icons.pause_circle : Icons.play_circle,
+                      // widget.isPlaying ? Icons.pause_circle : Icons.play_circle,
                       color: Colors.white,
                       size: 70,
                     ),
                     // onPressed: _togglePlayPause,
-                    onPressed: widget.onPlayPauseToggle,
+                    onPressed: togglePlayPauseLocal,
+                    // onPressed: widget.onPlayPauseToggle,
                     // onPressed: () async {
                     //
                     // if (_isPlaying) {
