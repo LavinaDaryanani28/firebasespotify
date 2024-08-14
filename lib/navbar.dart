@@ -40,25 +40,6 @@ class _NavigationbarState extends State<NavBar> {
   Duration position=Duration.zero;
   bool isRepeat=false;
   Color color=Colors.white;
-  bool isPlayingGlobal = false;
-
-  void togglePlayPauseGlobal(bool newState) {
-    setState(() {
-      isPlayingGlobal = newState;
-    });
-    if (isPlayingGlobal) {
-      pauseCurrentSong();
-
-    } else {
-      // playaudio(songs[currentIndex].url);
-      playCurrentSong();
-      // await audioPlayer.play(NetworkSource(""));
-      // log(Music[0].toString());
-      // log(playModel);
-      // await audioPlayer.play(AssetSource('audio/song.mp3'));
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -76,12 +57,14 @@ class _NavigationbarState extends State<NavBar> {
     _audioPlayer.onPositionChanged.listen((newposition) {
       setState(() {
         position = newposition;
+        print("${position}");
       });
     });
 
     _audioPlayer.onDurationChanged.listen((newduration) {
       setState(() {
         duration = newduration;
+        print("${duration}");
       });
     });
 
@@ -194,25 +177,42 @@ class _NavigationbarState extends State<NavBar> {
       _selectedIndex = index;
     });
   }
+
+  void _togglePlayPause() async {
+    if (_isPlaying) {
+      final song = _isShuffled ? _shuffledSongs[_currentIndex] : _songs[_currentIndex];
+      await _audioPlayer.play(UrlSource(song.url));
+      setState(() {
+        _isPlaying = true;
+      });
+    } else {
+      await _audioPlayer.pause();
+      setState(() {
+        _isPlaying = false;
+      });
+    }
+  }
   void _openMusicPlayer(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
             MusicPlayerWidget(
+              key: ValueKey(_isPlaying),
           songs: _isShuffled ? _shuffledSongs : _songs,
           currentIndex: _currentIndex,
           isPlaying: _isPlaying,
           position: position,
           duration: duration,
-          onPlayPauseToggle: ()  {
+          onPlayPauseToggle:
+              ()  async{
 
             if (_isPlaying) {
-             pauseCurrentSong();
+             await pauseCurrentSong();
 
             } else {
               // playaudio(songs[currentIndex].url);
-              playCurrentSong();
+              await playCurrentSong();
               // await audioPlayer.play(NetworkSource(""));
               // log(Music[0].toString());
               // log(playModel);
@@ -222,8 +222,6 @@ class _NavigationbarState extends State<NavBar> {
           onNext: playNextSong,
           onPrevious: playPrevSong,
           onSeek: _seekToPosition,
-              isPlayingGlobal: isPlayingGlobal,
-              togglePlayPauseGlobal: togglePlayPauseGlobal,
         ),
       ),
     );
@@ -287,7 +285,6 @@ class _NavigationbarState extends State<NavBar> {
   //   );
   // }
 
-
   Widget build(BuildContext context) {
     List<Widget> _pages = [
       Home(),
@@ -320,17 +317,11 @@ class _NavigationbarState extends State<NavBar> {
             child: MiniPlayerWidget(
               songTitle:songs[_currentIndex].name,
               isPlaying: _isPlaying,
-              onPlayPauseToggle: () {
+              onPlayPauseToggle: () async{
                   if (_isPlaying) {
-                    pauseCurrentSong();
-                    // setState(() {
-                    //   _isPlaying=false;
-                    // });
+                    await pauseCurrentSong();
                   } else {
-                    playCurrentSong();
-                    // setState(() {
-                    //   _isPlaying=true;
-                    // });
+                    await playCurrentSong();
                   }
               },
               onTap: () {
