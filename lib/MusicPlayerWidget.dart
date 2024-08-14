@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:developer';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +11,7 @@ enum RepeatMode {
   repeatOne,
   repeatAll,
 }
-class MusicPlayerWidget extends StatelessWidget{
+class MusicPlayerWidget extends StatefulWidget{
   final List<Song> songs;
   final int currentIndex;
   final bool isPlaying;
@@ -22,7 +23,6 @@ class MusicPlayerWidget extends StatelessWidget{
   final ValueChanged<Duration> onSeek;
   // final bool isShuffle;
   // final VoidCallback onShuffle;
-
   MusicPlayerWidget({
     required this.songs,
     required this.currentIndex,
@@ -36,9 +36,15 @@ class MusicPlayerWidget extends StatelessWidget{
     // required this.isShuffle,
     // required this.onShuffle
   });
+
+  @override
+  State<MusicPlayerWidget> createState() => _MusicPlayerWidgetState();
+}
+
+class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   @override
   Widget build(BuildContext context) {
-    return songs.isEmpty ? Container() :Scaffold(
+    return widget.songs.isEmpty ? Container(child: Text("No data"),) :Scaffold(
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 50, horizontal: 20),
@@ -62,7 +68,7 @@ class MusicPlayerWidget extends StatelessWidget{
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.network(
-                  songs[currentIndex].photo,
+                  widget.songs[widget.currentIndex].photo,
                   width: double.infinity,
                   height: 350,
                   fit: BoxFit.fill,
@@ -75,7 +81,7 @@ class MusicPlayerWidget extends StatelessWidget{
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   UiHelper.customText(
-                    songs[currentIndex].name,
+                    widget.songs[widget.currentIndex].name,
                     color: Colors.white,
                     fontweight: FontWeight.bold,
                     fontsize: 30,
@@ -105,11 +111,11 @@ class MusicPlayerWidget extends StatelessWidget{
               //   // },
               // ),
               Slider(
-                value: duration.inSeconds > 0
-                    ? position.inSeconds.toDouble()
+                value: widget.duration.inSeconds > 0
+                    ? widget.position.inSeconds.toDouble()
                     : 0.0,
                 min: 0.0,
-                max: duration.inSeconds.toDouble(),
+                max: widget.duration.inSeconds.toDouble(),
                 onChanged: (double value) {
                   final newposition = Duration(seconds: value.toInt());
                   audioPlayerService.audioPlayer.seek(newposition);
@@ -123,9 +129,9 @@ class MusicPlayerWidget extends StatelessWidget{
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    UiHelper.customText("${position.inMinutes}:${(position.inSeconds % 60).toString().padLeft(2, '0')}",
+                    UiHelper.customText("${widget.position.inMinutes}:${(widget.position.inSeconds % 60).toString().padLeft(2, '0')}",
                         color: Colors.white),
-                    UiHelper.customText("${duration.inMinutes}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}",
+                    UiHelper.customText("${widget.duration.inMinutes}:${(widget.duration.inSeconds % 60).toString().padLeft(2, '0')}",
                         color: Colors.white),
                   ],
                 ),
@@ -165,7 +171,7 @@ class MusicPlayerWidget extends StatelessWidget{
                     icon: Icon(Icons.skip_previous,
                         color: Colors.white, size: 40),
                     onPressed:
-                    onPrevious
+                    widget.onPrevious
                     //     () async{
                     //   await playPrevSong();
                     //   setState(() {
@@ -176,12 +182,12 @@ class MusicPlayerWidget extends StatelessWidget{
                   IconButton(
                     icon: Icon(
                       // _isPlaying ? Icons.pause_circle : Icons.play_circle,
-                      isPlaying ? Icons.pause_circle : Icons.play_circle,
+                      widget.isPlaying ? Icons.pause_circle : Icons.play_circle,
                       color: Colors.white,
                       size: 70,
                     ),
                     // onPressed: _togglePlayPause,
-                    onPressed: onPlayPauseToggle,
+                    onPressed: widget.onPlayPauseToggle,
                     // onPressed: () async {
                     //
                     // if (_isPlaying) {
@@ -199,7 +205,7 @@ class MusicPlayerWidget extends StatelessWidget{
                   IconButton(
                     icon:
                     Icon(Icons.skip_next, color: Colors.white, size: 40),
-                    onPressed:onNext
+                    onPressed:widget.onNext
                     //     () {
                     //   playNextSong().then((_) {
                     //     setState(() {

@@ -40,7 +40,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
     await playNextSong();
   }
   Future<void> _initializeMusicPlayer() async {
-    _songs = await fetchSongs();
+    // _songs = await fetchSongs();
     _shuffledSongs = List.from(_songs);
 
     _audioPlayer.onPositionChanged.listen((newposition) {
@@ -68,7 +68,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
     setState(() {});
   }
   Future<void> initialize() async{
-    _songs=await fetchSongs();
+    // _songs=await fetchSongs();
   }
   void _seekToPosition(Duration position) async {
     await _audioPlayer.seek(position);
@@ -149,7 +149,8 @@ class _MusicPlayerState extends State<MusicPlayer> {
     return Scaffold(
       body: Column(
         children: [
-          Expanded(child: MusicPlayerWidget(
+          Expanded(child:
+          MusicPlayerWidget(
             songs:_isShuffled?_shuffledSongs:_songs,
         currentIndex: _currentIndex,
         isPlaying: _isPlaying,
@@ -178,7 +179,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
               } else {
                 playCurrentSong();
               }
-            },
+            }, onTap: () {  },
           ),
         ],
       ),

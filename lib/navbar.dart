@@ -8,6 +8,7 @@ import 'package:spotifyfirebase/MiniPlayerWidget.dart';
 import 'package:spotifyfirebase/MusicPlayerWidget.dart';
 import 'package:spotifyfirebase/home.dart';
 import 'package:spotifyfirebase/library.dart';
+import 'package:spotifyfirebase/musicPlayer.dart';
 import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/settings.dart';
 
@@ -30,7 +31,6 @@ class _NavigationbarState extends State<NavBar> {
   List<Song> _shuffledSongs = [];
   bool _isPlaying = false;
   bool _isShuffled = false;
-  @override
   int _currentIndex = 0;
   // int get currentIndex=>_currentIndex;
   RepeatMode _repeatMode = RepeatMode.noRepeat;
@@ -40,6 +40,7 @@ class _NavigationbarState extends State<NavBar> {
   Duration position=Duration.zero;
   bool isRepeat=false;
   Color color=Colors.white;
+  @override
   void initState() {
     super.initState();
     _initializeMusicPlayer();
@@ -78,7 +79,7 @@ class _NavigationbarState extends State<NavBar> {
     setState(() {});
   }
   Future<List<Song>> _fetchSongs() async {
-    final snapshot = await FirebaseFirestore.instance.collection('songs').get();
+    final snapshot = await FirebaseFirestore.instance.collection('trial').get();
     return snapshot.docs.map((doc) => Song.fromDocument(doc)).toList();
   }
   // Future<void> initialize() async{
@@ -178,19 +179,26 @@ class _NavigationbarState extends State<NavBar> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MusicPlayerWidget(
+        builder: (context) =>
+            MusicPlayerWidget(
           songs: _isShuffled ? _shuffledSongs : _songs,
           currentIndex: _currentIndex,
           isPlaying: _isPlaying,
           position: position,
           duration: duration,
-          onPlayPauseToggle: () {
+          onPlayPauseToggle: ()  async{
+
             if (_isPlaying) {
-              pauseCurrentSong();
+             await pauseCurrentSong();
             } else {
-              playCurrentSong();
+              // playaudio(songs[currentIndex].url);
+              await playCurrentSong();
+              // await audioPlayer.play(NetworkSource(""));
+              // log(Music[0].toString());
+              // log(playModel);
+              // await audioPlayer.play(AssetSource('audio/song.mp3'));
             }
-          },
+            },
           onNext: playNextSong,
           onPrevious: playPrevSong,
           onSeek: _seekToPosition,
@@ -198,44 +206,64 @@ class _NavigationbarState extends State<NavBar> {
       ),
     );
   }
-  Widget miniPlayer(){
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      color: Colors.blueGrey,
-      width: double.infinity,
-      height: 60,
-      child:
-      GestureDetector(
-        onTap: (){
-          _openMusicPlayer(context);
-          // Navigator.push(context, MaterialPageRoute(builder: (context)=>AudioPlayerWidget()));
-          // showModalBottomSheet<void>(context: context, isScrollControlled:true,backgroundColor: Colors.black,builder: (BuildContext context) {
-          //   return
-          // });
-        },
-        child:
-        // Hero(
-        // tag: "page",
-        // child:
-        _selectedIndex!=3?
-        MiniPlayerWidget(
-          songTitle: _isShuffled
-              ? _shuffledSongs[_currentIndex].name
-              : _songs[_currentIndex].name,
-          isPlaying: _isPlaying,
-          onPlayPauseToggle: () {
-            if (_isPlaying) {
-              pauseCurrentSong();
-            } else {
-              playCurrentSong();
-            }
-          },
-        ):null
-        // ),
-      ),
-
-    );
-  }
+  // Widget miniPlayer(){
+  //   return AnimatedContainer(
+  //     duration: const Duration(milliseconds: 500),
+  //     color: Colors.blueGrey,
+  //     width: double.infinity,
+  //     height: 60,
+  //     child:
+  //     GestureDetector(
+  //       onTap: (){
+  //         _openMusicPlayer(context);
+  //         // Navigator.push(context, MaterialPageRoute(builder: (context)=>AudioPlayerWidget()));
+  //         // showModalBottomSheet<void>(context: context, isScrollControlled:true,backgroundColor: Colors.black,builder: (BuildContext context) {
+  //         //   return
+  //         // });
+  //       },
+  //       child:
+  //       // Hero(
+  //       // tag: "page",
+  //       // child:
+  //       _selectedIndex!=3?
+  //       MiniPlayerWidget(
+  //         songTitle:
+  //         "song",
+  //         // _isShuffled
+  //         //     ? _shuffledSongs[_currentIndex].name
+  //         //     : _songs[_currentIndex].name,
+  //         isPlaying: _isPlaying,
+  //         onPlayPauseToggle: () {
+  //           if (_isPlaying) {
+  //             pauseCurrentSong();
+  //           } else {
+  //             playCurrentSong();
+  //           }
+  //         }, onTap:  (){showModalBottomSheet<void>(context: context, isScrollControlled:true,backgroundColor: Colors.black,builder: (BuildContext context) {
+  //     return MusicPlayerWidget(
+  //       songs: _isShuffled ? _shuffledSongs : _songs,
+  //       currentIndex: _currentIndex,
+  //       isPlaying: _isPlaying,
+  //       position: position,
+  //       duration: duration,
+  //       onPlayPauseToggle: () {
+  //         if (_isPlaying) {
+  //           pauseCurrentSong();
+  //         } else {
+  //           playCurrentSong();
+  //         }
+  //       },
+  //       onNext: playNextSong,
+  //       onPrevious: playPrevSong,
+  //       onSeek: _seekToPosition,
+  //     );
+  //   });},
+  //       ):null
+  //       // ),
+  //     ),
+  //
+  //   );
+  // }
 
 
   Widget build(BuildContext context) {
@@ -263,11 +291,30 @@ class _NavigationbarState extends State<NavBar> {
     ];
 
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: Stack(children: [_pages[_selectedIndex],
+      if(_selectedIndex!=1)
+        Align(
+            alignment:  Alignment.bottomCenter,
+            child: MiniPlayerWidget(
+              songTitle:songs[_currentIndex].name,
+              isPlaying: _isPlaying,
+              onPlayPauseToggle: () {
+                  if (_isPlaying) {
+                    pauseCurrentSong();
+                  } else {
+                    playCurrentSong();
+                  }
+              },
+              onTap: () {
+                _openMusicPlayer(context);
+              },
+            ),
+        )
+      ]),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          miniPlayer(),
+          // miniPlayer(),
           // MiniPlayerWidget(),
           BottomNavigationBar(
             unselectedLabelStyle: const TextStyle(color: Colors.white, fontSize: 14),
@@ -291,7 +338,6 @@ class _NavigationbarState extends State<NavBar> {
             ],
             backgroundColor: Colors.black,
           ),
-
         ],
       ),
     );

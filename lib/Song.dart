@@ -17,7 +17,7 @@ class Song{
     );
   }
 }
-Future<List<Song>> fetchSongs() async{
-  final snapshot=await FirebaseFirestore.instance.collection('trial').get();
-  return snapshot.docs.map((doc)=>Song.fromDocument(doc)).toList();
-}
+// Future<List<Song>> fetchSongs() async{
+//   final snapshot=await FirebaseFirestore.instance.collection('trial').get();
+//   return snapshot.docs.map((doc)=>Song.fromDocument(doc)).toList();
+// }
