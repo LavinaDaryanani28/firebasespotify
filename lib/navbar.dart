@@ -40,10 +40,12 @@ class _NavigationbarState extends State<NavBar> {
   Duration position=Duration.zero;
   bool isRepeat=false;
   Color color=Colors.white;
+  late String songUrl;
   @override
   void initState() {
     super.initState();
     _initializeMusicPlayer();
+
     // Load the audio file to get its duration - Changed by Abhay
     // audioPlayer.setSource(AssetSource('audio/song.mp3'));
   }
@@ -53,18 +55,16 @@ class _NavigationbarState extends State<NavBar> {
   Future<void> _initializeMusicPlayer() async {
     _songs = await _fetchSongs();
     _shuffledSongs = List.from(_songs);
-
+    songUrl =_songs[_currentIndex].url;
     _audioPlayer.onPositionChanged.listen((newposition) {
       setState(() {
         position = newposition;
-        print("${position}");
       });
     });
 
     _audioPlayer.onDurationChanged.listen((newduration) {
       setState(() {
         duration = newduration;
-        print("${duration}");
       });
     });
 
@@ -180,15 +180,16 @@ class _NavigationbarState extends State<NavBar> {
 
   void _togglePlayPause() async {
     if (_isPlaying) {
+      await _audioPlayer.pause();
+      setState(() {
+        _isPlaying = false;
+      });
+    } else {
+
       final song = _isShuffled ? _shuffledSongs[_currentIndex] : _songs[_currentIndex];
       await _audioPlayer.play(UrlSource(song.url));
       setState(() {
         _isPlaying = true;
-      });
-    } else {
-      await _audioPlayer.pause();
-      setState(() {
-        _isPlaying = false;
       });
     }
   }
@@ -204,27 +205,30 @@ class _NavigationbarState extends State<NavBar> {
           isPlaying: _isPlaying,
           position: position,
           duration: duration,
-          onPlayPauseToggle:
-              ()  async{
-
-            if (_isPlaying) {
-             await pauseCurrentSong();
-
-            } else {
-              // playaudio(songs[currentIndex].url);
-              await playCurrentSong();
-              // await audioPlayer.play(NetworkSource(""));
-              // log(Music[0].toString());
-              // log(playModel);
-              // await audioPlayer.play(AssetSource('audio/song.mp3'));
-            }
-            },
+          onPlayPauseToggle:_togglePlayPause,
+            //   ()  async{
+            //
+            // if (_isPlaying) {
+            //  await pauseCurrentSong();
+            //
+            // } else {
+            //   // playaudio(songs[currentIndex].url);
+            //   await playCurrentSong();
+            //   // await audioPlayer.play(NetworkSource(""));
+            //   // log(Music[0].toString());
+            //   // log(playModel);
+            //   // await audioPlayer.play(AssetSource('audio/song.mp3'));
+            // }
+            // },
           onNext: playNextSong,
           onPrevious: playPrevSong,
-          onSeek: _seekToPosition,
+          onSeek: _seekToPosition, url: songUrl,
         ),
       ),
-    );
+    ).then((_) {
+      // Ensure that the latest state is updated in the mini player as well
+      setState(() {});
+    });
   }
   // Widget miniPlayer(){
   //   return AnimatedContainer(
@@ -326,7 +330,7 @@ class _NavigationbarState extends State<NavBar> {
               },
               onTap: () {
                 _openMusicPlayer(context);
-              },
+              }, position: position, duration: duration, onSeek: _seekToPosition,
             ),
         )
       ]),

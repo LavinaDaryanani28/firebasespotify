@@ -5,12 +5,15 @@ class MiniPlayerWidget extends StatelessWidget {
   final bool isPlaying;
   final VoidCallback onPlayPauseToggle;
   final VoidCallback onTap;
+  final Duration position;
+  final Duration duration;
+  final ValueChanged<Duration> onSeek;
 
   MiniPlayerWidget({
     required this.songTitle,
     required this.isPlaying,
     required this.onPlayPauseToggle,
-    required this.onTap,
+    required this.onTap, required this.position, required this.duration, required this.onSeek,
   });
 
   @override
@@ -34,6 +37,15 @@ class MiniPlayerWidget extends StatelessWidget {
               ),
               onPressed: onPlayPauseToggle,
             ),
+            // Slider(
+            //     value: position.inSeconds.toDouble(),
+            //     min: 0.0,
+            //     max: duration.inSeconds.toDouble(),
+            //     onChanged: (value) {
+            //       final newPosition = Duration(seconds: value.toInt());
+            //       onSeek(newPosition);
+            //     },
+            //   ),
           ],
         ),
       ),

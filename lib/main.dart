@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:spotifyfirebase/MusicPlayerWidget.dart';
 import 'package:spotifyfirebase/musicPlayer.dart';
 import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/playtrial.dart';
@@ -18,7 +19,7 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(MyApp());
   // runApp(
   //   ChangeNotifierProvider(
   //     create: (_) => MusicController(),
