@@ -78,7 +78,7 @@ class _NavigationbarState extends State<NavBar> {
       });
     });
 
-    setState(() {});
+    // setState(() {});
   }
   Future<List<Song>> _fetchSongs() async {
     final snapshot = await FirebaseFirestore.instance.collection('trial').get();
@@ -180,18 +180,27 @@ class _NavigationbarState extends State<NavBar> {
 
   void _togglePlayPause() async {
     if (_isPlaying) {
-      await _audioPlayer.pause();
-      setState(() {
-        _isPlaying = false;
-      });
+      _audioPlayer.pause();
     } else {
-
-      final song = _isShuffled ? _shuffledSongs[_currentIndex] : _songs[_currentIndex];
-      await _audioPlayer.play(UrlSource(song.url));
-      setState(() {
-        _isPlaying = true;
-      });
+      _audioPlayer.play(UrlSource(_songs[_currentIndex].url));
     }
+    setState(() {
+      _isPlaying = !_isPlaying;
+      print("value of isPlaying in navbar${_isPlaying}");
+    });
+    // if (_isPlaying) {
+    //   await _audioPlayer.pause();
+    //   setState(() {
+    //     _isPlaying = false;
+    //   });
+    // } else {
+    //
+    //   final song = _isShuffled ? _shuffledSongs[_currentIndex] : _songs[_currentIndex];
+    //   await _audioPlayer.play(UrlSource(song.url));
+    //   setState(() {
+    //     _isPlaying = true;
+    //   });
+    // }
   }
   void _openMusicPlayer(BuildContext context) {
     Navigator.push(
@@ -199,7 +208,6 @@ class _NavigationbarState extends State<NavBar> {
       MaterialPageRoute(
         builder: (context) =>
             MusicPlayerWidget(
-              key: ValueKey(_isPlaying),
           songs: _isShuffled ? _shuffledSongs : _songs,
           currentIndex: _currentIndex,
           isPlaying: _isPlaying,
@@ -321,13 +329,14 @@ class _NavigationbarState extends State<NavBar> {
             child: MiniPlayerWidget(
               songTitle:songs[_currentIndex].name,
               isPlaying: _isPlaying,
-              onPlayPauseToggle: () async{
-                  if (_isPlaying) {
-                    await pauseCurrentSong();
-                  } else {
-                    await playCurrentSong();
-                  }
-              },
+              onPlayPauseToggle: _togglePlayPause,
+                  // () async{
+                  // if (_isPlaying) {
+                  //   await pauseCurrentSong();
+                  // } else {
+                  //   await playCurrentSong();
+                  // }
+              // },
               onTap: () {
                 _openMusicPlayer(context);
               }, position: position, duration: duration, onSeek: _seekToPosition,
