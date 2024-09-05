@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:spotifyfirebase/AudioPlayerModel.dart';
 import 'package:spotifyfirebase/MusicPlayerWidget.dart';
 import 'package:spotifyfirebase/musicPlayer.dart';
 import 'package:spotifyfirebase/player.dart';
@@ -19,13 +20,13 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
-  // runApp(
-  //   ChangeNotifierProvider(
-  //     create: (_) => MusicController(),
-  //     child: MyApp(),
-  //   ),
-  // );
+  // runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AudioPlayerModel()..fetchSongs(),
+      child: MyApp(),
+    ),
+  );
 
 }
 

@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spotifyfirebase/AudioPlayerModel.dart';
 import 'package:spotifyfirebase/MiniPlayerWidget.dart';
 import 'package:spotifyfirebase/MusicPlayerWidget.dart';
 import 'package:spotifyfirebase/home.dart';
@@ -40,7 +42,7 @@ class _NavigationbarState extends State<NavBar> {
   Duration position=Duration.zero;
   bool isRepeat=false;
   Color color=Colors.white;
-  late String songUrl;
+  // late String songUrl;
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,7 @@ class _NavigationbarState extends State<NavBar> {
   Future<void> _initializeMusicPlayer() async {
     _songs = await _fetchSongs();
     _shuffledSongs = List.from(_songs);
-    songUrl =_songs[_currentIndex].url;
+    // songUrl =_songs[_currentIndex].url;
     _audioPlayer.onPositionChanged.listen((newposition) {
       setState(() {
         position = newposition;
@@ -230,7 +232,10 @@ class _NavigationbarState extends State<NavBar> {
             // },
           onNext: playNextSong,
           onPrevious: playPrevSong,
-          onSeek: _seekToPosition, url: songUrl,
+          onSeek: _seekToPosition, url: '',
+              songPhotoUrl: context.watch<AudioPlayerModel>().currentSongPhoto ?? '',
+              songTitle: context.watch<AudioPlayerModel>().currentSongName.toString(),
+              onRepeatToggle: () {  },
         ),
       ),
     ).then((_) {
@@ -327,7 +332,7 @@ class _NavigationbarState extends State<NavBar> {
         Align(
             alignment:  Alignment.bottomCenter,
             child: MiniPlayerWidget(
-              songTitle:songs[_currentIndex].name,
+              songTitle: context.watch<AudioPlayerModel>().currentSongName.toString(),
               isPlaying: _isPlaying,
               onPlayPauseToggle: _togglePlayPause,
                   // () async{
@@ -339,7 +344,7 @@ class _NavigationbarState extends State<NavBar> {
               // },
               onTap: () {
                 _openMusicPlayer(context);
-              }, position: position, duration: duration, onSeek: _seekToPosition,
+              }, position: position, duration: duration, onSeek: _seekToPosition, songUrl: 'songUrl',
             ),
         )
       ]),

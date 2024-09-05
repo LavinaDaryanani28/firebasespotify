@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spotifyfirebase/AudioPlayerModel.dart';
 
 class MiniPlayerWidget extends StatelessWidget {
   final String songTitle;
+  final String songUrl;
   final bool isPlaying;
   final VoidCallback onPlayPauseToggle;
   final VoidCallback onTap;
@@ -13,7 +16,7 @@ class MiniPlayerWidget extends StatelessWidget {
     required this.songTitle,
     required this.isPlaying,
     required this.onPlayPauseToggle,
-    required this.onTap, required this.position, required this.duration, required this.onSeek,
+    required this.onTap, required this.position, required this.duration, required this.onSeek, required this.songUrl,
   });
 
   @override
@@ -30,12 +33,25 @@ class MiniPlayerWidget extends StatelessWidget {
               songTitle,
               style: TextStyle(color: Colors.white),
             ),
+            // IconButton(
+            //   icon: Icon(
+            //     isPlaying ? Icons.pause : Icons.play_arrow,
+            //     color: Colors.white,
+            //   ),
+            //   onPressed: onPlayPauseToggle,
+            // ),
             IconButton(
               icon: Icon(
-                isPlaying ? Icons.pause : Icons.play_arrow,
+                context.watch<AudioPlayerModel>().isPlaying ? Icons.pause : Icons.play_arrow,
                 color: Colors.white,
               ),
-              onPressed: onPlayPauseToggle,
+              onPressed: () {
+                if (context.read<AudioPlayerModel>().isPlaying) {
+                  context.read<AudioPlayerModel>().pauseCurrentSong();
+                } else {
+                  context.read<AudioPlayerModel>().playCurrentSong();
+                }
+              },
             ),
             // Slider(
             //     value: position.inSeconds.toDouble(),
