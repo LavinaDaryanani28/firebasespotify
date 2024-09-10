@@ -364,11 +364,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
                               },
                               ),
 
-                          // IconButton(
-                          //   icon: Icon(Icons.shuffle, color: isShuffle?Colors.green:Colors.white, size: 30),
-                          //   // onPressed:_toggleShuffle,
-                          //   onPressed: onShuffle,
-                          // ),
+                          IconButton(
+                            icon: Icon(Icons.shuffle, color: context.watch<AudioPlayerModel>().isShuffled
+                                ? Colors.blue
+                                : Colors.white, size: 30),
+                            // onPressed:_toggleShuffle,
+                            onPressed:(){
+                              context.read<AudioPlayerModel>().toggleShuffleMode();
+                            },
+                          ),
                         ],
                       ),
                     ],

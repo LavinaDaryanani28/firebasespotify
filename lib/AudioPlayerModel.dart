@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,11 +23,23 @@ class AudioPlayerModel with ChangeNotifier{
   List<Song> _songs = []; // List of songs
   int _currentIndex = 0;
   RepeatMode _repeatMode = RepeatMode.noRepeat;
-  List<Song> get songs => _isShuffled ? _shuffledSongs : _songs;
-  List<Song> _shuffledSongs = [];
+
   RepeatMode get repeatMode => _repeatMode;
+  bool get isShuffled => _isShuffled;
+  List<Song> _shuffledSongs = [];
+  List<Song> get songs => _isShuffled ? _shuffledSongs : _songs;
   AudioPlayerModel() {
     _initializeAudioPlayer();
+  }
+  void toggleShuffleMode() {
+    if (_isShuffled) {
+      // Call unshuffle when shuffle mode is off
+      unshuffleSongs();
+    } else {
+      // Shuffle the songs
+      shuffleSongs();
+    }
+    notifyListeners();
   }
   Future<void> _initializeAudioPlayer() async {
     _songs = await fetchSongs();
