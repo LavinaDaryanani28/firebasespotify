@@ -8,26 +8,22 @@ import 'package:spotifyfirebase/musicPlayer.dart';
 import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/playtrial.dart';
 import 'package:spotifyfirebase/splashscreen.dart';
-import 'package:spotifyfirebase/trial.dart';
 import 'package:spotifyfirebase/trial2.dart';
 
 import 'firebase_options.dart';
 import 'home.dart';
 import 'navbar.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // runApp(MyApp());
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => AudioPlayerModel()..fetchSongs(),
-      child: MyApp(),
-    ),
-  );
-
+  runApp(ChangeNotifierProvider(
+    create: (_) => AudioPlayerModel(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -43,7 +39,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: NavBar(),
+        home: Trial(),
       ),
     );
   }
