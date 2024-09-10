@@ -1,50 +1,84 @@
-// import 'dart:developer';
-//
-// import 'package:flutter/material.dart';
-//
-// import 'Song.dart';
-// import 'musicPlayer.dart';
-//
-// class Trial2 extends StatefulWidget {
-//   const Trial2({super.key});
-//
-//   @override
-//   State<Trial2> createState() => _Trial2State();
-// }
-//
-// class _Trial2State extends State<Trial2> {
-//
-//   final MusicPlayer _musicPlayer=MusicPlayer();
-//   // Map <dynamic,dynamic>songlist="" as Map ;
-//   List <Song> songlist=[];
-//   @override
-//   void initState(){
-//     super.initState();
-//     _musicPlayer.initialize().then((_){
-//       setState(() {
-//
-//       });
-//     });
-//     // log("song list : ${_musicPlayer.songs}");
-//     // songlist = _musicPlayer.songs.map((s)=>s.name="arijitsingh").toList();
-//         // where((s)=>s.artist="arijit singh");
-//     // songlist = songlist.where((s) => s.name.toLowerCase().contains(searchString.text.toLowerCase())).toList();
-//     // songlist = _musicPlayer.songs.where((s)=>s.name == "O Mahi").toList();
-//     // song = _musicPlayer.songs[0].name;
-//     // songlist.addAll(_musicPlayer.songs.where((s)=>s.name == "O Mahi"));
-//     // _musicPlayer.songs.forEach((el){
-//     _musicPlayer.songs.map((el){
-//       log("in");
-//       if(el.artist == "arijit singh")
-//       songlist.add(el);
-//     });
-//
-//   }
-//   @override
-//   Widget build(BuildContext context) {
-//     print("widget : ${songlist.length}");
-//     return Scaffold(
-//       body: songlist.isEmpty ? Text("no text") : Text(songlist[0].name)
-//     );
-//   }
-// }
+import 'dart:developer';
+import 'dart:math';
+
+import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:spotifyfirebase/AudioPlayerModel.dart';
+import 'package:spotifyfirebase/MiniPlayerWidget.dart';
+import 'package:spotifyfirebase/MusicPlayerWidget.dart';
+import 'package:spotifyfirebase/home.dart';
+import 'package:spotifyfirebase/library.dart';
+import 'package:spotifyfirebase/musicPlayer.dart';
+import 'package:spotifyfirebase/player.dart';
+import 'package:spotifyfirebase/settings.dart';
+
+import 'Song.dart';
+enum RepeatMode {
+  noRepeat,
+  repeatOne,
+  repeatAll,
+}
+class Trial extends StatefulWidget {
+  const Trial({super.key});
+
+  @override
+  State<Trial> createState() => _TrialState();
+}
+
+class _TrialState extends State<Trial> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    _selectedIndex = index;
+  }
+
+  Widget build(BuildContext context) {
+    List<Widget> _pages = [
+      Home(),
+      Library(),
+      Setting(),
+    ];
+
+    return Scaffold(
+      body: Stack(children: [_pages[_selectedIndex],
+        if(_selectedIndex!=1)
+          Align(
+            alignment:  Alignment.bottomCenter,
+            child: MiniPlayerWidget(),
+          )
+      ]),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // miniPlayer(),
+          // MiniPlayerWidget(),
+          BottomNavigationBar(
+            unselectedLabelStyle: const TextStyle(color: Colors.white, fontSize: 14),
+            fixedColor: Colors.white,
+            unselectedItemColor: Colors.white,
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            items: [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home,color: Colors.white,size: 30,),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.library_music_outlined,color: Colors.white,size: 30,),
+                label: 'Library',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person,color: Colors.white,size: 30,),
+                label: 'Profile',
+              ),
+            ],
+            backgroundColor: Colors.black,
+          ),
+        ],
+      ),
+    );
+  }
+
+}

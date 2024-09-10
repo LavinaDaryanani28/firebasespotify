@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen2>{
       if(check!=null)
       {
         if(check){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>NavBar()));
+          // Navigator.push(context, MaterialPageRoute(builder: (context)=>NavBar()));
         }
         else{
           Navigator.push(context, MaterialPageRoute(builder: (context)=>Signin()));
