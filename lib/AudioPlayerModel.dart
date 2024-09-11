@@ -27,6 +27,8 @@ class AudioPlayerModel with ChangeNotifier {
   int _currentIndex = 0;
   RepeatMode _repeatMode = RepeatMode.noRepeat;
 
+  List<dynamic> dataList = [];
+
   List<Song> get songs => isShuffled ? _shuffledSongs : _songs;
   RepeatMode get repeatMode => _repeatMode;
 
@@ -60,12 +62,36 @@ class AudioPlayerModel with ChangeNotifier {
 
   Future<void> _fetchSongs() async {
     try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection('trial').get();
-      log("Fetched songs from Firestore: ${snapshot.docs.length}");
-      _songs = snapshot.docs.map((doc) => Song.fromDocument(doc)).toList();
-      _shuffledSongs = List.from(_songs)..shuffle(); // Initialize shuffled list
+      DatabaseReference ref = FirebaseDatabase.instance.ref();
+      try {
+        DatabaseEvent event = await ref.once();
+        DataSnapshot snapshot = event.snapshot;
 
+        if (snapshot.value != null) {
+          List<dynamic> rawData = snapshot.value as List<dynamic>;
+
+          _songs = rawData.map((el) {
+              return Song.fromDocument(el ?? {}); // Ensure element is not null
+            }).toList();
+
+          _shuffledSongs = List.from(_songs)
+            ..shuffle(); // Initialize shuffled list
+          log("Fetched songs from Firestore: ${_songs.length}");
+
+          // example to get specific record only
+          log("arijit singh: ${_songs.where((el) => el.artist == 'arijit singh')}");
+        } else {
+          print("Error: snapshot.value is null.");
+        }
+      } catch (e) {
+        print("Error: $e");
+      }
+
+      // final snapshot =
+      //     await FirebaseFirestore.instance.collection('trial').get();
+      // log("Fetched songs from Firestore: ${snapshot.docs.length}");
+      // _songs = snapshot.docs.map((doc) => Song.fromDocument(doc)).toList();
+      // _shuffledSongs = List.from(_songs)..shuffle(); // Initialize shuffled list
       if (_songs.isNotEmpty) {
         _setCurrentSong(0); // Set the first song as the current song
       }

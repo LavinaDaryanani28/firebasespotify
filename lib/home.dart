@@ -11,17 +11,49 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<Map<String, String>> albums = [
-    {'title': 'Album 1', 'image': 'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'},
-    {'title': 'Album 2', 'image': 'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'},
-    {'title': 'Album 3', 'image': 'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'},
-    {'title': 'Album 4', 'image': 'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'},
+    {
+      'title': 'Album 1',
+      'image':
+          'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
+    },
+    {
+      'title': 'Album 2',
+      'image':
+          'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
+    },
+    {
+      'title': 'Album 3',
+      'image':
+          'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
+    },
+    {
+      'title': 'Album 4',
+      'image':
+          'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
+    },
   ];
 
   final List<Map<String, String>> artists = [
-    {'name': 'Artist 1', 'image': 'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'},
-    {'name': 'Artist 2', 'image': 'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'},
-    {'name': 'Artist 3', 'image': 'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'},
-    {'name': 'Artist 4', 'image': 'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'},
+    {
+      'name': 'Artist 1',
+      'image':
+          'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
+    },
+    {
+      'name': 'Artist 2',
+      'image':
+          'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
+    },
+    {
+      'name': 'Artist 3',
+      'image':
+          'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
+    },
+    {
+      'name': 'Artist 4',
+      'image':
+          'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
+    },
   ];
 
   final List<Map<String, String>> songs = [
@@ -48,7 +80,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        toolbarHeight: 150.0.h, //set your height
+        toolbarHeight: 140.0.h, //set your height
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -56,11 +88,13 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  UiHelper.customText("Good "+ greetings(),
+                  UiHelper.customText("Good " + greetings(),
                       color: Colors.white,
                       fontsize: 30,
                       fontweight: FontWeight.bold),
-                  SizedBox(height: 10,),
+                  SizedBox(
+                    height: 10,
+                  ),
                   TextField(
                     decoration: InputDecoration(
                       labelText: 'Search',
@@ -87,7 +121,7 @@ class _HomeState extends State<Home> {
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -115,13 +149,13 @@ class _HomeState extends State<Home> {
                 // SizedBox(height: 30,),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: UiHelper.customText(
-                    'Albums',
-                    fontsize: 24, color:Colors.white,
-                  ),
+                  child: UiHelper.customText('Albums',
+                      fontsize: 24,
+                      color: Colors.white,
+                      fontweight: FontWeight.bold),
                 ),
                 Container(
-                  height: 150,
+                  height: 150.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: albums.length,
@@ -130,9 +164,13 @@ class _HomeState extends State<Home> {
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            Image.network(albums[index]['image']!, height: 100, width: 100),
+                            Image.network(albums[index]['image']!,
+                                height: 100, width: 100),
                             SizedBox(height: 8),
-                            Text(albums[index]['title']!),
+                            Text(
+                              albums[index]['title']!,
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ],
                         ),
                       );
@@ -142,12 +180,13 @@ class _HomeState extends State<Home> {
                 // Artist List
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: UiHelper.customText(
-                    'Artists',
-                    fontsize: 24, color: Colors.white),
-                  ),
+                  child: UiHelper.customText('Artists',
+                      fontsize: 24,
+                      color: Colors.white,
+                      fontweight: FontWeight.bold),
+                ),
                 Container(
-                  height: 120,
+                  height: 120.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: artists.length,
@@ -157,11 +196,15 @@ class _HomeState extends State<Home> {
                         child: Column(
                           children: [
                             CircleAvatar(
-                              backgroundImage: NetworkImage(artists[index]['image']!),
+                              backgroundImage:
+                                  NetworkImage(artists[index]['image']!),
                               radius: 40,
                             ),
                             SizedBox(height: 8),
-                            Text(artists[index]['name']!),
+                            Text(
+                              artists[index]['name']!,
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ],
                         ),
                       );
@@ -190,7 +233,9 @@ class _HomeState extends State<Home> {
                 //     ],
                 //   ),
                 // ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 // UiHelper.customText("India's Best",  color:Colors.white,fontsize:  20),
                 // SingleChildScrollView(
                 //   scrollDirection: Axis.horizontal,
@@ -210,12 +255,14 @@ class _HomeState extends State<Home> {
                 //     ],
                 //   ),
                 // ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: UiHelper.customText(
-                    'Songs',fontsize: 24,color: Colors.white),
-                  ),
+                  child: UiHelper.customText('Songs',
+                      fontsize: 24, color: Colors.white),
+                ),
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,

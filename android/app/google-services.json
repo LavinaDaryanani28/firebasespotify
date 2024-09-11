@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:557448715527:android:becc4a64c22eb65eb8b9a2",
         "android_client_info": {
-          "package_name": "com.example.spotify"
+          "package_name": "com.example.spotifyfirebase"
         }
       },
       "oauth_client": [],
