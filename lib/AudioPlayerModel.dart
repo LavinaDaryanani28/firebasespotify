@@ -24,7 +24,7 @@ class AudioPlayerModel with ChangeNotifier {
   String? currentSongPhoto;
   List<Song> _songs = []; // List of songs
   List<Song> _shuffledSongs = [];
-  int _currentIndex = 0;
+  int currentIndex = 0;
   RepeatMode _repeatMode = RepeatMode.noRepeat;
 
   List<dynamic> dataList = [];
@@ -59,27 +59,44 @@ class AudioPlayerModel with ChangeNotifier {
       next(); // Play the next song when the current one finishes
     });
   }
+  Future<void> fetchSongs() async {
+    await _fetchSongs(); // Call the private method
+  }
 
   Future<void> _fetchSongs() async {
     try {
-      DatabaseReference ref = FirebaseDatabase.instance.ref();
+      DatabaseReference ref = FirebaseDatabase.instance.ref('/songs');
+
       try {
         DatabaseEvent event = await ref.once();
         DataSnapshot snapshot = event.snapshot;
 
         if (snapshot.value != null) {
-          List<dynamic> rawData = snapshot.value as List<dynamic>;
-
-          _songs = rawData.map((el) {
-              return Song.fromDocument(el ?? {}); // Ensure element is not null
-            }).toList();
-
+          // List<dynamic> rawData = snapshot.value as List<dynamic>;
+          //changes by me
+          final Map<dynamic, dynamic> rawData = snapshot.value as Map<dynamic, dynamic>;
+          // _songs = rawData.map((el) {
+          //     return Song.fromDocument(el ?? {}); // Ensure element is not null
+          //   }).toList();
+print(rawData);
+          _songs = rawData.values.map((el) {
+            return Song.fromDocument(el ?? {}); // Ensure element is not null
+          }).toList();
+          print(_songs);
           _shuffledSongs = List.from(_songs)
             ..shuffle(); // Initialize shuffled list
-          log("Fetched songs from Firestore: ${_songs.length}");
 
+          log("Fetched songs from Firestore: ${_songs.length}");
+          if (_songs.isNotEmpty) {
+
+
+            _setCurrentSong(0); // Set the first song as the current song
+          } else {
+            log("Error: No songs available");
+          }
+          notifyListeners();
           // example to get specific record only
-          log("arijit singh: ${_songs.where((el) => el.artist == 'arijit singh')}");
+          // log("arijit singh: ${_songs.where((el) => el.artist == 'arijit singh')}");
         } else {
           print("Error: snapshot.value is null.");
         }
@@ -92,10 +109,10 @@ class AudioPlayerModel with ChangeNotifier {
       // log("Fetched songs from Firestore: ${snapshot.docs.length}");
       // _songs = snapshot.docs.map((doc) => Song.fromDocument(doc)).toList();
       // _shuffledSongs = List.from(_songs)..shuffle(); // Initialize shuffled list
-      if (_songs.isNotEmpty) {
-        _setCurrentSong(0); // Set the first song as the current song
-      }
-      notifyListeners(); // Notify listeners after fetching songs
+      // if (_songs.isNotEmpty) {
+      //   _setCurrentSong(0); // Set the first song as the current song
+      // }
+      // notifyListeners(); // Notify listeners after fetching songs
     } catch (e) {
       log("Error fetching songs: $e");
     }
@@ -103,10 +120,10 @@ class AudioPlayerModel with ChangeNotifier {
 
   void _setCurrentSong(int index) {
     if (index >= 0 && index < songs.length) {
-      _currentIndex = index;
-      currentSongUrl = songs[_currentIndex].url;
-      currentSongName = songs[_currentIndex].name;
-      currentSongPhoto = songs[_currentIndex].photo;
+      currentIndex = index;
+      currentSongUrl = songs[currentIndex].url;
+      currentSongName = songs[currentIndex].name;
+      currentSongPhoto = songs[currentIndex].photo;
       notifyListeners();
     }
   }
@@ -134,13 +151,13 @@ class AudioPlayerModel with ChangeNotifier {
     if (_songs.isEmpty) return;
 
     if (_repeatMode == RepeatMode.repeatOne) {
-      _setCurrentSong(_currentIndex); // Repeat the same song
+      _setCurrentSong(currentIndex); // Repeat the same song
     } else if (_repeatMode == RepeatMode.repeatAll &&
-        _currentIndex == songs.length - 1) {
+        currentIndex == songs.length - 1) {
       _setCurrentSong(0); // Go back to the first song
-    } else if (_currentIndex < songs.length - 1) {
-      _setCurrentSong(_currentIndex + 1); // Go to the next song
-    } else if (_currentIndex == songs.length - 1 &&
+    } else if (currentIndex < songs.length - 1) {
+      _setCurrentSong(currentIndex + 1); // Go to the next song
+    } else if (currentIndex == songs.length - 1 &&
         _repeatMode == RepeatMode.noRepeat) {
       stop(); // Stop if the end of the playlist is reached and no repeat is set
       return;
@@ -149,9 +166,9 @@ class AudioPlayerModel with ChangeNotifier {
   }
 
   void previous() {
-    if (_currentIndex > 0) {
-      _setCurrentSong(_currentIndex - 1);
-    } else if (_repeatMode == RepeatMode.repeatAll && _currentIndex == 0) {
+    if (currentIndex > 0) {
+      _setCurrentSong(currentIndex - 1);
+    } else if (_repeatMode == RepeatMode.repeatAll && currentIndex == 0) {
       _setCurrentSong(songs.length - 1);
     }
     play();
@@ -159,7 +176,7 @@ class AudioPlayerModel with ChangeNotifier {
 
   void toggleShuffle() {
     isShuffled = !isShuffled;
-    _currentIndex = 0; // Reset to the first song after toggling shuffle
+    currentIndex = 0; // Reset to the first song after toggling shuffle
     notifyListeners();
   }
 
@@ -182,8 +199,8 @@ class AudioPlayerModel with ChangeNotifier {
       if (_repeatMode == RepeatMode.repeatOne) {
         await playCurrentSong();
       } else {
-        _currentIndex = (_currentIndex + 1) % songs.length;
-        if (_currentIndex == 0 && _repeatMode == RepeatMode.noRepeat) {
+        currentIndex = (currentIndex + 1) % songs.length;
+        if (currentIndex == 0 && _repeatMode == RepeatMode.noRepeat) {
           await stopCurrentSong();
         } else {
           await playCurrentSong();
@@ -195,9 +212,9 @@ class AudioPlayerModel with ChangeNotifier {
   Future<void> playPrevSong() async {
     if (_songs.isNotEmpty) {
       await _audioPlayer.stop();
-      _currentIndex = (_currentIndex - 1) % _songs.length;
-      if (_currentIndex < 0) {
-        _currentIndex = _songs.length - 1;
+      currentIndex = (currentIndex - 1) % _songs.length;
+      if (currentIndex < 0) {
+        currentIndex = _songs.length - 1;
       }
       await playCurrentSong();
     }
@@ -205,7 +222,7 @@ class AudioPlayerModel with ChangeNotifier {
 
   Future<void> playCurrentSong() async {
     if (_songs.isNotEmpty) {
-      final song = songs[_currentIndex];
+      final song = songs[currentIndex];
       currentSongUrl = song.url;
       currentSongName = song.name;
       currentSongPhoto = song.photo;
@@ -227,7 +244,7 @@ class AudioPlayerModel with ChangeNotifier {
 
   void shuffleSongs() {
     if (_songs.isNotEmpty) {
-      final currentSong = songs[_currentIndex];
+      final currentSong = songs[currentIndex];
       _shuffledSongs = List.from(_songs);
       _shuffledSongs.remove(currentSong);
       _shuffledSongs.shuffle();
@@ -239,7 +256,7 @@ class AudioPlayerModel with ChangeNotifier {
 
   void unshuffleSongs() {
     isShuffled = false;
-    _currentIndex = _songs.indexOf(_shuffledSongs[_currentIndex]);
+    currentIndex = _songs.indexOf(_shuffledSongs[currentIndex]);
     notifyListeners();
   }
 

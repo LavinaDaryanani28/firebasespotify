@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:spotifyfirebase/uihelper.dart';
+
+import 'AudioPlayerModel.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -77,6 +80,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -266,15 +270,24 @@ class _HomeState extends State<Home> {
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
-                  itemCount: songs.length,
+                  itemCount: audioPlayerModel.songs.length,
                   itemBuilder: (context, index) {
+                    final song = audioPlayerModel.songs[index];
                     return ListTile(
                       leading: Icon(Icons.music_note),
-                      title: Text(songs[index]['title']!),
-                      subtitle: Text(songs[index]['artist']!),
+                      title: Text(song.name),
+                      subtitle: Text(song.artist),
                       onTap: () {
-                        // Handle song click
+                        // Update the current song and play it when tapped
+                        audioPlayerModel.currentIndex = index; // Update current song index
+                        audioPlayerModel.playCurrentSong();
                       },
+                      trailing: Icon(
+                        Icons.play_arrow, // Show play icon
+                        color: audioPlayerModel.isPlaying && audioPlayerModel.currentSongName == song.name
+                            ? Colors.green // Show green if the current song is playing
+                            : Colors.grey,  // Show grey otherwise
+                      ),
                     );
                   },
                 ),

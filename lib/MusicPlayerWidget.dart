@@ -21,7 +21,6 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   late Duration duration;
   late Duration position;
   late String url;
-
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);

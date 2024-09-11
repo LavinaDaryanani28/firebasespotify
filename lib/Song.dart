@@ -11,11 +11,11 @@ class Song{
   factory Song.fromDocument(Map<dynamic, dynamic> json){
     return Song(
       // id:json['id'],
-      name: json['songname'],
-      url:json['link'],
-      photo: json['photo'],
-      artist:json['artist'],
-      album:json['album']
+      name: json['songname']??'',
+      url:json['link']??'',
+      photo: json['photo']??'',
+      artist:json['artist']??'',
+      album:json['album']??''
     );
   }
 }
