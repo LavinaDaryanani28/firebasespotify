@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -81,6 +83,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
+    // log("length artist : "+ audioPlayerModel.artist.length.toString());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -159,7 +162,7 @@ class _HomeState extends State<Home> {
                       fontweight: FontWeight.bold),
                 ),
                 Container(
-                  height: 150.h,
+                  height: 140.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: albums.length,
@@ -190,10 +193,10 @@ class _HomeState extends State<Home> {
                       fontweight: FontWeight.bold),
                 ),
                 Container(
-                  height: 120.h,
+                  height: 110.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: artists.length,
+                    itemCount: audioPlayerModel.artist.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -201,12 +204,12 @@ class _HomeState extends State<Home> {
                           children: [
                             CircleAvatar(
                               backgroundImage:
-                                  NetworkImage(artists[index]['image']!),
+                                  NetworkImage(audioPlayerModel.artist[index].image),
                               radius: 40,
                             ),
                             SizedBox(height: 8),
                             Text(
-                              artists[index]['name']!,
+                              audioPlayerModel.artist[index].artistname,
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
@@ -237,9 +240,9 @@ class _HomeState extends State<Home> {
                 //     ],
                 //   ),
                 // ),
-                SizedBox(
-                  height: 30,
-                ),
+                // SizedBox(
+                //   height: 30,
+                // ),
                 // UiHelper.customText("India's Best",  color:Colors.white,fontsize:  20),
                 // SingleChildScrollView(
                 //   scrollDirection: Axis.horizontal,

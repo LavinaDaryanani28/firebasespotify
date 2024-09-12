@@ -1,22 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Song{
+class Song {
   // final String id;
   final String name;
   final String url;
   final String photo;
   final String artist;
   final String album;
-  Song({required this.name,required this.url,required this.photo,required this.artist,required this.album});
-  factory Song.fromDocument(Map<dynamic, dynamic> json){
+  Song(
+      {required this.name,
+      required this.url,
+      required this.photo,
+      required this.artist,
+      required this.album});
+  factory Song.fromDocument(Map<dynamic, dynamic> json) {
     return Song(
-      // id:json['id'],
-      name: json['songname']??'',
-      url:json['link']??'',
-      photo: json['photo']??'',
-      artist:json['artist']??'',
-      album:json['album']??''
-    );
+        // id:json['id'],
+        name: json['songname'] ?? '',
+        url: json['link'] ?? '',
+        photo: json['photo'] ?? '',
+        artist: json['artist'] ?? '',
+        album: json['album'] ?? '');
   }
 }
 // Future<List<Song>> fetchSongs() async{

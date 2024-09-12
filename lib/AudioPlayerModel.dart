@@ -4,6 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:spotifyfirebase/ArtistModel.dart';
 
 import 'Song.dart';
 
@@ -32,12 +33,15 @@ class AudioPlayerModel with ChangeNotifier {
   List<Song> get songs => isShuffled ? _shuffledSongs : _songs;
   RepeatMode get repeatMode => _repeatMode;
 
+  List<ArtistModel> artist = [];
+
   AudioPlayerModel() {
     _initializeAudioPlayer();
   }
 
   Future<void> _initializeAudioPlayer() async {
     await _fetchSongs(); // Fetch songs and initialize
+    await _fetchArtist(); // Fetch songs and initialize
 
     _audioPlayer.onPlayerStateChanged.listen((state) {
       isPlaying = state == PlayerState.playing;
@@ -59,8 +63,30 @@ class AudioPlayerModel with ChangeNotifier {
       next(); // Play the next song when the current one finishes
     });
   }
-  Future<void> fetchSongs() async {
-    await _fetchSongs(); // Call the private method
+
+  Future<void> _fetchArtist() async {
+    try {
+      DatabaseReference ref = FirebaseDatabase.instance.ref('/artist');
+
+      try {
+        DatabaseEvent event = await ref.once();
+        DataSnapshot snapshot = event.snapshot;
+
+        if (snapshot.value != null) {
+          final List<dynamic> rawData = snapshot.value as List<dynamic>;
+          log("artist list : "+rawData.toString());
+          artist = await rawData.map((el) {
+            return ArtistModel.fromDocument(el ?? {}); // Ensure element is not null
+          }).toList();
+
+            notifyListeners();
+        }
+      } catch (e) {
+        print("Error: $e");
+      }
+    } catch (e) {
+      log("Error fetching artist: $e");
+    }
   }
 
   Future<void> _fetchSongs() async {
@@ -74,22 +100,21 @@ class AudioPlayerModel with ChangeNotifier {
         if (snapshot.value != null) {
           // List<dynamic> rawData = snapshot.value as List<dynamic>;
           //changes by me
-          final Map<dynamic, dynamic> rawData = snapshot.value as Map<dynamic, dynamic>;
+          final List<dynamic> rawData = snapshot.value as List<dynamic>;
           // _songs = rawData.map((el) {
           //     return Song.fromDocument(el ?? {}); // Ensure element is not null
           //   }).toList();
-print(rawData);
-          _songs = rawData.values.map((el) {
+
+          _songs = await rawData.map((el) {
             return Song.fromDocument(el ?? {}); // Ensure element is not null
           }).toList();
-          print(_songs);
+
           _shuffledSongs = List.from(_songs)
             ..shuffle(); // Initialize shuffled list
 
           log("Fetched songs from Firestore: ${_songs.length}");
+
           if (_songs.isNotEmpty) {
-
-
             _setCurrentSong(0); // Set the first song as the current song
           } else {
             log("Error: No songs available");
