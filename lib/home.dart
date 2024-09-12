@@ -162,17 +162,18 @@ class _HomeState extends State<Home> {
                   height: 150.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: albums.length,
+                    itemCount: audioPlayerModel.album.length,
                     itemBuilder: (context, index) {
+                      final album = audioPlayerModel.album[index];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
-                            Image.network(albums[index]['image']!,
+                            Image.network(album.photo,
                                 height: 100, width: 100),
                             SizedBox(height: 8),
                             Text(
-                              albums[index]['title']!,
+                              album.name,
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
@@ -193,20 +194,21 @@ class _HomeState extends State<Home> {
                   height: 120.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: artists.length,
+                    itemCount: audioPlayerModel.artist.length,
                     itemBuilder: (context, index) {
+                      final artist = audioPlayerModel.artist[index];
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Column(
                           children: [
                             CircleAvatar(
                               backgroundImage:
-                                  NetworkImage(artists[index]['image']!),
+                                  NetworkImage(artist.photo),
                               radius: 40,
                             ),
                             SizedBox(height: 8),
                             Text(
-                              artists[index]['name']!,
+                              artist.name,
                               style: TextStyle(color: Colors.white),
                             ),
                           ],
