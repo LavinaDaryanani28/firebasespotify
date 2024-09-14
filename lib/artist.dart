@@ -2,64 +2,76 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:spotifyfirebase/ArtistModel.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
+import 'AudioPlayerModel.dart';
+import 'Song.dart';
 import 'albums.dart';
 
 double _appTopBarHeight = 40;
 String artistName = 'Arijit Singh';
+late ArtistModel artist;
+List<Song> artistSongs = [];
 
 var arrContent = [
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
   {
     "image":
-    "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+        "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
     "songname": "Lorem Ipsum1",
     "threedot": Icons.more_vert,
   },
 ];
 
 class Artist extends StatelessWidget {
-  const Artist({super.key});
+  late String artistname;
+  Artist({required this.artistname});
 
   @override
   Widget build(BuildContext context) {
+    final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
+    artist = audioPlayerModel.artist.firstWhere((el) => el.name == artistname);
+    artistSongs = audioPlayerModel.songs
+        .where((el) => el.artist == artistname.toLowerCase())
+        .toList();
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              delegate: MyDelegate(),
+              delegate: MyDelegate(artistname: artistname),
               floating: true,
               pinned: true,
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                    (_, index) => Padding(
+                (_, index) => Padding(
                   padding: const EdgeInsets.only(left: 15, top: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,26 +86,25 @@ class Artist extends StatelessWidget {
                               forecolor: Colors.white,
                               side: 1.0,
                               sidecolor: Colors.white, callback: () {
-                                showModalBottomSheet<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        height: 350,
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            image: NetworkImage(
-                                                "https://i.scdn.co/image/ab6761610000e5eb0261696c5df3be99da6ed3f3"),
-                                            fit: BoxFit.cover,
-                                          ),
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(16.0),
-                                            topRight: Radius.circular(16.0),
-                                          ),
-                                        ),
-                                      );
-                                    });
-                              }),
+                            showModalBottomSheet<void>(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Container(
+                                    height: 350,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: NetworkImage(artist.photo),
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(16.0),
+                                        topRight: Radius.circular(16.0),
+                                      ),
+                                    ),
+                                  );
+                                });
+                          }),
                           SizedBox(
                             width: 10,
                           ),
@@ -104,26 +115,28 @@ class Artist extends StatelessWidget {
                               bgcolor: Colors.transparent,
                               forecolor: Colors.white,
                               side: 1.0,
-                              sidecolor: Colors.white,
-                              callback: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Album()));
-                              }),
+                              sidecolor: Colors.white, callback: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Album()));
+                          }),
                           Spacer(),
-                          UiHelper.iconBtn(25,color:Colors.white,
-                              icondata:Icons.shuffle,
-                              callback:(){}),
-                          UiHelper.iconBtn(35,color:Colors.white,
-                              icondata:Icons.play_circle,
-                              callback:(){}),
+                          UiHelper.iconBtn(25,
+                              color: Colors.white,
+                              icondata: Icons.shuffle,
+                              callback: () {}),
+                          UiHelper.iconBtn(35,
+                              color: Colors.white,
+                              icondata: Icons.play_circle,
+                              callback: () {}),
                         ],
                       ),
                       SizedBox(
                         height: 10,
                       ),
-                      UiHelper.customText("Popular",color: Colors.white, fontsize: 25),
+                      UiHelper.customText("Popular",
+                          color: Colors.white, fontsize: 25),
                       ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
@@ -135,20 +148,27 @@ class Artist extends StatelessWidget {
                               child: Row(
                                 children: [
                                   UiHelper.customText((index + 1).toString(),
-                                      color: Colors.white, fontsize: 15,fontweight: FontWeight.bold),
-                                  SizedBox(width: 15,),
+                                      color: Colors.white,
+                                      fontsize: 15,
+                                      fontweight: FontWeight.bold),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
                                   Image.network(
-                                    arrContent[index]["image"].toString()
-                                    as String,
+                                    artistSongs[index].photo,
+                                    // arrContent[index]["image"].toString()
+                                    // as String,
                                     fit: BoxFit.contain,
                                   ),
-                                  SizedBox(width: 10,),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
                                   Expanded(
-                                    child:
-                                    UiHelper.customText(
-                                        arrContent[index]["songname"].toString(),
+                                    child: UiHelper.customText(
+                                        artistSongs[index].songname,
                                         color: Colors.white,
-                                        fontsize: 20),),
+                                        fontsize: 20),
+                                  ),
                                 ],
                               ),
                             ),
@@ -159,7 +179,7 @@ class Artist extends StatelessWidget {
                             ),
                           );
                         },
-                        itemCount: arrContent.length,
+                        itemCount: artistSongs.length,
                       ),
                       SizedBox(
                         height: 20,
@@ -178,7 +198,7 @@ class Artist extends StatelessWidget {
                                 children: [
                                   Image.network(
                                     arrContent[index]["image"].toString()
-                                    as String,
+                                        as String,
                                     height: 70,
                                     width: 70,
                                     fit: BoxFit.fill,
@@ -186,7 +206,9 @@ class Artist extends StatelessWidget {
                                   SizedBox(
                                     width: 15,
                                   ),
-                                  UiHelper.customText(arrContent[index]["songname"].toString(),color: Colors.white),
+                                  UiHelper.customText(
+                                      arrContent[index]["songname"].toString(),
+                                      color: Colors.white),
                                 ],
                               ),
                             ),
@@ -211,10 +233,13 @@ class Artist extends StatelessWidget {
 }
 
 class MyDelegate extends SliverPersistentHeaderDelegate {
+  late String artistname;
+  MyDelegate({required this.artistname});
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     var shrinkPercentage =
-    min(1, shrinkOffset / (maxExtent - minExtent)).toDouble();
+        min(1, shrinkOffset / (maxExtent - minExtent)).toDouble();
 
     return Stack(
       clipBehavior: Clip.hardEdge,
@@ -235,11 +260,10 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                 child: Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                        fit: BoxFit.fitWidth,
-                        alignment: FractionalOffset.topCenter,
-                        image: NetworkImage(
-                            'https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg'),
-                      )),
+                    fit: BoxFit.fitWidth,
+                    alignment: FractionalOffset.topCenter,
+                    image: NetworkImage(artist.photo),
+                  )),
                 ),
               ),
             ],
@@ -265,10 +289,14 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                       child: Row(
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          IconButton(onPressed: (){Navigator.of(context).pop();}, icon: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          )),
+                          IconButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Colors.white,
+                              )),
                           SizedBox(
                             width: 20,
                           ),
@@ -278,7 +306,10 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           //   child:
                           Opacity(
                             opacity: shrinkPercentage,
-                            child: UiHelper.customText(artistName,fontweight: FontWeight.bold,fontsize: 20,color: Colors.white),
+                            child: UiHelper.customText(artistname,
+                                fontweight: FontWeight.bold,
+                                fontsize: 20,
+                                color: Colors.white),
                           ),
                           // ),
                         ],
@@ -291,7 +322,10 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     child: Column(
                       children: [
                         SizedBox(height: 70),
-                        UiHelper.customText(artistName,fontweight: FontWeight.bold,fontsize: 60,color: Colors.white),
+                        UiHelper.customText(artistname,
+                            fontweight: FontWeight.bold,
+                            fontsize: 60,
+                            color: Colors.white),
                       ],
                     ),
                   )
@@ -313,8 +347,6 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
   @override
   bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) => false;
 }
-
-
 
 // import 'package:spotify/Widgets/UiHelper.dart';
 // import 'package:flutter/material.dart';

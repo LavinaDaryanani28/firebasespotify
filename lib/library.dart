@@ -111,7 +111,7 @@ class _LibraryState extends State<Library> {
                                 bgcolor: Colors.transparent,
                                 forecolor: Colors.white,
                                 side: 1.0,
-                                sidecolor: Colors.white,callback: (){Navigator.push(context,MaterialPageRoute(builder: (context)=>Artist()));}),
+                                sidecolor: Colors.white,callback: (){Navigator.push(context,MaterialPageRoute(builder: (context)=>Artist(artistname: artistName,)));}),
                             SizedBox(
                               width: 10.w,
                             ),
@@ -124,7 +124,7 @@ class _LibraryState extends State<Library> {
                                 bgcolor: Colors.transparent,
                                 forecolor: Colors.white,
                                 side: 1.0,
-                                sidecolor: Colors.white,callback: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Artist()));}),
+                                sidecolor: Colors.white,callback: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Artist(artistname: artistName,)));}),
                             SizedBox(
                               width: 10.w,
                             ),

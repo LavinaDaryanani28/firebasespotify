@@ -221,7 +221,7 @@ class AudioPlayerModel with ChangeNotifier {
     if (index >= 0 && index < songs.length) {
       currentIndex = index;
       currentSongUrl = songs[currentIndex].url;
-      currentSongName = songs[currentIndex].name;
+      currentSongName = songs[currentIndex].songname;
       currentSongPhoto = songs[currentIndex].photo;
       notifyListeners();
     }
@@ -323,7 +323,7 @@ class AudioPlayerModel with ChangeNotifier {
     if (_songs.isNotEmpty) {
       final song = songs[currentIndex];
       currentSongUrl = song.url;
-      currentSongName = song.name;
+      currentSongName = song.songname;
       currentSongPhoto = song.photo;
       await _audioPlayer.play(UrlSource(song.url));
       isPlaying = true;

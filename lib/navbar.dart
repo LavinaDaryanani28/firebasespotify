@@ -31,7 +31,9 @@ class _NavigationbarState extends State<NavBar> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    _selectedIndex = index;
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   Widget build(BuildContext context) {
@@ -42,18 +44,12 @@ class _NavigationbarState extends State<NavBar> {
     ];
 
     return Scaffold(
-      body: Stack(children: [_pages[_selectedIndex],
-        if(_selectedIndex!=1)
-          Align(
-            alignment:  Alignment.bottomCenter,
-            child: MiniPlayerWidget(),
-          )
-      ]),
+      body: _pages[_selectedIndex],
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // miniPlayer(),
-          // MiniPlayerWidget(),
+          MiniPlayerWidget(),
           BottomNavigationBar(
             unselectedLabelStyle: const TextStyle(color: Colors.white, fontSize: 14),
             fixedColor: Colors.white,

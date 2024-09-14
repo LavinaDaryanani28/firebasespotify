@@ -140,7 +140,7 @@ class Album extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Artist()));
+                                  builder: (context) => Artist(artistname: artistName,)));
                         }),
                       ],
                     ),
