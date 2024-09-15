@@ -32,10 +32,11 @@ class AudioPlayerModel with ChangeNotifier {
   RepeatMode _repeatMode = RepeatMode.noRepeat;
   late DatabaseReference ref;
   List<dynamic> dataList = [];
-
+  List<Song> _likedSongs = [];
   List<Song> get songs => isShuffled ? _shuffledSongs : _songs;
   List<ArtistModel> get artist => _artist;
   List<AlbumModel> get album => _album;
+  List<Song> get likedSongs => _likedSongs;
   RepeatMode get repeatMode => _repeatMode;
 
   AudioPlayerModel() {
@@ -46,6 +47,7 @@ class AudioPlayerModel with ChangeNotifier {
     await _fetchSongs(); // Fetch songs and initialize
     await fetchArtist();
     await fetchAlbum();
+    await fetchLiked();
     _audioPlayer.onPlayerStateChanged.listen((state) {
       isPlaying = state == PlayerState.playing;
       notifyListeners();
@@ -216,7 +218,63 @@ class AudioPlayerModel with ChangeNotifier {
       log("Error fetching songs: $e");
     }
   }
+  Future<void> fetchLiked() async {
+    try {
+      ref = FirebaseDatabase.instance.ref('likedSongs');
 
+      try {
+        DatabaseEvent event = await ref.once();
+        DataSnapshot snapshot = event.snapshot;
+
+        if (snapshot.value != null) {
+          if (snapshot.value is List) {
+            List<dynamic> rawData = snapshot.value as List<dynamic>;
+
+            // Process the list into the Song model
+            _likedSongs = rawData
+                .map((el) => Song.fromDocument(el ?? {})) // Ensure element is not null
+                .toList();
+          } else if (snapshot.value is Map) {
+            Map<dynamic, dynamic> rawData = snapshot.value as Map<dynamic, dynamic>;
+
+            _likedSongs = rawData.values
+                .map((el) => Song.fromDocument(el ?? {})) // Ensure element is not null
+                .toList();
+          } else {
+            print("Error: Unsupported data type.");
+          }
+
+          log("Fetched liked songs from Firestore: ${_likedSongs.length}");
+          if (_likedSongs.isNotEmpty) {
+
+
+            _setCurrentSong(0); // Set the first song as the current song
+          } else {
+            log("Error: No songs available");
+          }
+          notifyListeners();
+          // example to get specific record only
+          // log("arijit singh: ${_songs.where((el) => el.artist == 'arijit singh')}");
+        } else {
+          print("Error: snapshot.value is null.");
+        }
+      } catch (e) {
+        print("Error: $e");
+      }
+
+      // final snapshot =
+      //     await FirebaseFirestore.instance.collection('trial').get();
+      // log("Fetched songs from Firestore: ${snapshot.docs.length}");
+      // _songs = snapshot.docs.map((doc) => Song.fromDocument(doc)).toList();
+      // _shuffledSongs = List.from(_songs)..shuffle(); // Initialize shuffled list
+      // if (_songs.isNotEmpty) {
+      //   _setCurrentSong(0); // Set the first song as the current song
+      // }
+      // notifyListeners(); // Notify listeners after fetching songs
+    } catch (e) {
+      log("Error fetching liked Songs: $e");
+    }
+  }
   void _setCurrentSong(int index) {
     if (index >= 0 && index < songs.length) {
       currentIndex = index;

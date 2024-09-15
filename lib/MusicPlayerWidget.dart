@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +24,11 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   late Duration duration;
   late Duration position;
   late String url;
+  late DatabaseReference ref;
+  @override
+  void initState(){
+    ref = FirebaseDatabase.instance.ref('likedSongs');
+  }
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
@@ -94,6 +102,15 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
           30,
           icondata: Icons.add_circle_outline_outlined,
           color: Colors.white,
+          callback:(){
+            Map<dynamic,dynamic> likedSongs={
+              'songname':audioPlayerModel.currentSongName,
+              'url':audioPlayerModel.currentSongUrl,
+              'photo':audioPlayerModel.currentSongPhoto
+            };
+            ref.push().set(likedSongs);
+            log(likedSongs.toString());
+          }
         ),
       ],
     );

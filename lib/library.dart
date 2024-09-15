@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:spotifyfirebase/LikedSongs.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
 import 'albums.dart';
@@ -176,7 +177,12 @@ class _LibraryState extends State<Library> {
                         UiHelper.customTextButton("Liked Songs",
                             color: Colors.white,
                             fontweight: FontWeight.bold,
-                            fontsize: 18),
+                            fontsize: 18,
+                          callback:() {
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) =>
+                                    LikedSongs()));
+                          }),
                       ],
                     ),
                     Expanded(

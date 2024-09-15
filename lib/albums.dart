@@ -76,7 +76,8 @@ var arrContent = [
 final borderside = BorderSide(color: Colors.white, width: 2);
 
 class Album extends StatelessWidget {
-  const Album({super.key});
+  late String artistname;
+  // Artist({required this.artistname});
 
   @override
   Widget build(BuildContext context) {
