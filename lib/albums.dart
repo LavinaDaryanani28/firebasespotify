@@ -3,12 +3,16 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:spotifyfirebase/AlbumModel.dart';
+import 'package:spotifyfirebase/AudioPlayerModel.dart';
+import 'package:spotifyfirebase/Song.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
 import 'artist.dart';
 
 double _appTopBarHeight = 40;
-String AlbumName = 'Arijit Singh';
+// String AlbumName = 'Arijit Singh';
 
 var arrContent = [
   {
@@ -76,18 +80,20 @@ var arrContent = [
 final borderside = BorderSide(color: Colors.white, width: 2);
 
 class Album extends StatelessWidget {
-  late String artistname;
-  // Artist({required this.artistname});
+  late AlbumModel albumModel;
+  Album({required this.albumModel});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context){
+  final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
+    List<Song> albumsongs = audioPlayerModel.songs.where((el)=>el.album.toLowerCase() == albumModel.albumname.toLowerCase()).toList();
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              delegate: MyDelegate(),
+              delegate: MyDelegate(albumModel:albumModel),
               floating: true,
               pinned: true,
             ),
@@ -138,10 +144,10 @@ class Album extends StatelessWidget {
                             forecolor: Colors.white,
                             side: 1.0,
                             sidecolor: Colors.white, callback: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Artist(artistname: artistName,)));
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context) => Artist(artistname: artistName,)));
                         }),
                       ],
                     ),
@@ -165,13 +171,13 @@ class Album extends StatelessWidget {
                           IconButton(
                               onPressed: () {},
                               icon: Image.network(
-                                  "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg")),
+                                  albumsongs[index].photo)),
                           // UiHelper.iconBtn(30,imagePath:  "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
                           // Image.network(
                           //     "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
                           //   ),
                           UiHelper.customText(
-                              arrContent[index]["songname"].toString(),
+                              albumsongs[index].songname,
                               color: Colors.white,
                               fontsize: 20),
                         ],
@@ -179,7 +185,7 @@ class Album extends StatelessWidget {
                     ),
                   );
                 },
-                childCount: arrContent.length,
+                childCount: albumsongs.length,
               ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -301,6 +307,8 @@ class Album extends StatelessWidget {
 }
 
 class MyDelegate extends SliverPersistentHeaderDelegate {
+  late AlbumModel albumModel;
+  MyDelegate({required this.albumModel});
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -329,7 +337,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     fit: BoxFit.fitWidth,
                     alignment: FractionalOffset.topCenter,
                     image: NetworkImage(
-                      'https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg',
+                      albumModel.photo,
                     ),
                   )),
                 ),
@@ -372,7 +380,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           //   child:
                           Opacity(
                             opacity: shrinkPercentage,
-                            child: UiHelper.customText(AlbumName,
+                            child: UiHelper.customText(albumModel.albumname,
                                 fontweight: FontWeight.bold,
                                 fontsize: 20,
                                 color: Colors.white),
@@ -389,7 +397,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     child: Column(
                       children: [
                         SizedBox(height: 70),
-                        UiHelper.customText(AlbumName,
+                        UiHelper.customText(albumModel.albumname,
                             fontweight: FontWeight.bold,
                             fontsize: 60,
                             color: Colors.white),

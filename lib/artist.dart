@@ -11,9 +11,6 @@ import 'Song.dart';
 import 'albums.dart';
 
 double _appTopBarHeight = 40;
-String artistName = 'Arijit Singh';
-late ArtistModel artist;
-List<Song> artistSongs = [];
 
 var arrContent = [
   {
@@ -49,23 +46,25 @@ var arrContent = [
 ];
 
 class Artist extends StatelessWidget {
-  late String artistname;
-  Artist({required this.artistname});
+  late ArtistModel artistModel;
+  Artist({required this.artistModel});
 
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
-    artist = audioPlayerModel.artist.firstWhere((el) => el.name == artistname);
-    artistSongs = audioPlayerModel.songs
-        .where((el) => el.artist == artistname.toLowerCase())
-        .toList();
+    // artist = audioPlayerModel.artist.firstWhere((el) => el.name == artistname);
+    // artistSongs = audioPlayerModel.songs
+    //     .where((el) => el.artist == artistname.toLowerCase())
+    //     .toList();
+
+    List<Song> artistSongs = audioPlayerModel.songs.where((el)=>el.artist.toLowerCase() == artistModel.artistname.toLowerCase()).toList();
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              delegate: MyDelegate(artistname: artistname),
+              delegate: MyDelegate(artistModel: artistModel),
               floating: true,
               pinned: true,
             ),
@@ -94,7 +93,7 @@ class Artist extends StatelessWidget {
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                        image: NetworkImage(artist.photo),
+                                        image: NetworkImage("https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
                                         fit: BoxFit.cover,
                                       ),
                                       borderRadius: BorderRadius.only(
@@ -116,10 +115,10 @@ class Artist extends StatelessWidget {
                               forecolor: Colors.white,
                               side: 1.0,
                               sidecolor: Colors.white, callback: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => Album()));
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => Album()));
                           }),
                           Spacer(),
                           UiHelper.iconBtn(25,
@@ -233,8 +232,8 @@ class Artist extends StatelessWidget {
 }
 
 class MyDelegate extends SliverPersistentHeaderDelegate {
-  late String artistname;
-  MyDelegate({required this.artistname});
+  late ArtistModel artistModel;
+  MyDelegate({required this.artistModel});
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -262,7 +261,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                       image: DecorationImage(
                     fit: BoxFit.fitWidth,
                     alignment: FractionalOffset.topCenter,
-                    image: NetworkImage(artist.photo),
+                    image: NetworkImage(artistModel.photo),
                   )),
                 ),
               ),
@@ -306,7 +305,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           //   child:
                           Opacity(
                             opacity: shrinkPercentage,
-                            child: UiHelper.customText(artistname,
+                            child: UiHelper.customText(artistModel.artistname,
                                 fontweight: FontWeight.bold,
                                 fontsize: 20,
                                 color: Colors.white),
@@ -322,7 +321,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     child: Column(
                       children: [
                         SizedBox(height: 70),
-                        UiHelper.customText(artistname,
+                        UiHelper.customText(artistModel.artistname,
                             fontweight: FontWeight.bold,
                             fontsize: 60,
                             color: Colors.white),

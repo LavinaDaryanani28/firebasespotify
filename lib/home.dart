@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:spotifyfirebase/albums.dart';
 import 'package:spotifyfirebase/artist.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
@@ -152,51 +153,7 @@ class _HomeState extends State<Home> {
                 //   ),
                 // ),
                 // SizedBox(height: 30,),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: UiHelper.customText('Albums',
-                      fontsize: 24,
-                      color: Colors.white,
-                      fontweight: FontWeight.bold),
-                ),
-                Container(
-                  height: 150.h,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: audioPlayerModel.album.length,
-                    itemBuilder: (context, index) {
-                      final album = audioPlayerModel.album[index];
-                      return Container(
-                        // color: Colors.grey,
-                        height: double.infinity,
-                        width: 115,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 8.0, left: 8.0, bottom: 8.0),
-                          // color: Colors.white,
-                          child: Column(
-                            children: [
-                              Image.network(
-                                album.photo,
-                                height: 100,
-                                width: 100,
-                                fit: BoxFit.cover,
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                album.name,
-                                style: TextStyle(color: Colors.white),
-                                overflow: TextOverflow
-                                    .ellipsis, // Adds '...' at the end of the truncated text
-                                maxLines: 1,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+
                 // Artist List
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -217,7 +174,9 @@ class _HomeState extends State<Home> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Artist(artistname: artist.name,)));
+                                  builder: (context) => Artist(
+                                        artistModel: artist,
+                                      )));
                         },
                         child: Container(
                             // color: Colors.grey,
@@ -234,7 +193,7 @@ class _HomeState extends State<Home> {
                                   ),
                                   SizedBox(height: 8),
                                   Text(
-                                    artist.name,
+                                    artist.artistname,
                                     style: TextStyle(color: Colors.white),
                                     overflow: TextOverflow
                                         .ellipsis, // Adds '...' at the end of the truncated text
@@ -243,6 +202,57 @@ class _HomeState extends State<Home> {
                                 ],
                               ),
                             )),
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: UiHelper.customText('Albums',
+                      fontsize: 24,
+                      color: Colors.white,
+                      fontweight: FontWeight.bold),
+                ),
+                Container(
+                  height: 150.h,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: audioPlayerModel.album.length,
+                    itemBuilder: (context, index) {
+                      final album = audioPlayerModel.album[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => Album(albumModel:album)));
+                        },
+                        child: Container(
+                          // color: Colors.grey,
+                          height: double.infinity,
+                          width: 115,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 8.0, left: 8.0, bottom: 8.0),
+                            // color: Colors.white,
+                            child: Column(
+                              children: [
+                                Image.network(
+                                  album.photo,
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  album.albumname,
+                                  style: TextStyle(color: Colors.white),
+                                  overflow: TextOverflow
+                                      .ellipsis, // Adds '...' at the end of the truncated text
+                                  maxLines: 1,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -314,7 +324,8 @@ class _HomeState extends State<Home> {
                       trailing: Icon(
                         Icons.play_arrow, // Show play icon
                         color: audioPlayerModel.isPlaying &&
-                                audioPlayerModel.currentSongName == song.songname
+                                audioPlayerModel.currentSongName ==
+                                    song.songname
                             ? Colors
                                 .green // Show green if the current song is playing
                             : Colors.grey, // Show grey otherwise
