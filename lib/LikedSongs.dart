@@ -20,7 +20,7 @@ class _LikedSongsState extends State<LikedSongs> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        toolbarHeight: 140.0.h,
+        toolbarHeight: 40.0.h,
       ),
       body: Container(
         child: SingleChildScrollView(

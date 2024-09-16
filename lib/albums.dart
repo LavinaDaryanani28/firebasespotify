@@ -99,7 +99,7 @@ class Album extends StatelessWidget {
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
+                (context, int index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 10, horizontal: 10),
