@@ -14,7 +14,7 @@ class MiniPlayerWidget extends StatelessWidget {
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context)=>MusicPlayerWidget()));
       },
-      child: Container(
+      child: audioPLayerModel.songs.isEmpty ? CircularProgressIndicator():Container(
         padding: EdgeInsets.all(10),
         color: Colors.grey[900],
         child: Row(
