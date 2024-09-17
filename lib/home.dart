@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -15,59 +17,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  // final List<Map<String, String>> albums = [
-  //   {
-  //     'title': 'Album 1',
-  //     'image':
-  //         'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
-  //   },
-  //   {
-  //     'title': 'Album 2',
-  //     'image':
-  //         'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
-  //   },
-  //   {
-  //     'title': 'Album 3',
-  //     'image':
-  //         'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
-  //   },
-  //   {
-  //     'title': 'Album 4',
-  //     'image':
-  //         'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
-  //   },
-  // ];
-  //
-  // final List<Map<String, String>> artists = [
-  //   {
-  //     'name': 'Artist 1',
-  //     'image':
-  //         'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
-  //   },
-  //   {
-  //     'name': 'Artist 2',
-  //     'image':
-  //         'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
-  //   },
-  //   {
-  //     'name': 'Artist 3',
-  //     'image':
-  //         'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
-  //   },
-  //   {
-  //     'name': 'Artist 4',
-  //     'image':
-  //         'https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b'
-  //   },
-  // ];
-  //
-  // final List<Map<String, String>> songs = [
-  //   {'title': 'Song 1', 'artist': 'Artist 1'},
-  //   {'title': 'Song 2', 'artist': 'Artist 2'},
-  //   {'title': 'Song 3', 'artist': 'Artist 3'},
-  //   {'title': 'Song 4', 'artist': 'Artist 4'},
-  // ];
-
+  String _searchQuery = '';
+  bool _isSearching = false;
   String greetings() {
     DateTime now = DateTime.now();
     int hours = now.hour;
@@ -101,14 +52,84 @@ class _HomeState extends State<Home> {
                   SizedBox(
                     height: 10,
                   ),
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Search',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      prefixIcon: Icon(Icons.search),
-                    ),
-                  ),
+                  Column(
+                    children:[ TextField(
+                        decoration: InputDecoration(
+                          labelText: 'Search',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onChanged:  (query) {
+                          setState(() {
+                            _searchQuery = query;
+                            _isSearching = query.isNotEmpty;
+                          });
+                          // Call the search function whenever the query changes
+                          audioPlayerModel.searchSongs(query);
+                        },
+                      ),
+                      if (_isSearching && audioPlayerModel.searchResults.isNotEmpty)
+                        // Expanded(
+                        //     child: ListView.builder(
+                        //       itemCount: audioPlayerModel.searchResults.length,
+                        //       itemBuilder: (context, index) {
+                        //         final song = audioPlayerModel.searchResults[index];
+                        //         return ListTile(
+                        //           title: Text(song['songname']),
+                        //           onTap: () {
+                        //             // Play the selected song
+                        //             audioPlayerModel.playCurrentSong(); // Play the song URL
+                        //             setState(() {
+                        //               _searchQuery = song['songname'];
+                        //               _isSearching = false;
+                        //             });
+                        //           },
+                        //         );
+                        //       },
+                        //     ),
+                        // ),
+                        DropdownButton<String>(
+                          items: audioPlayerModel.searchResults.map((song) {
+                            final songName = song['songname'];
+                            // Debugging: Check if the song name is correctly fetched
+                            log('Song found: $songName');
+                            return DropdownMenuItem<String>(
+                              value: song['songname'],
+                              child: Text(song['songname']??"Unknown song",style: TextStyle(color: Colors.white),),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _searchQuery = value!;
+                              _isSearching = false;
+                            });
+                            audioPlayerModel.playCurrentSong();
+                          },
+                          isExpanded: true,
+                          hint: Text("Select a song",style: TextStyle(color: Colors.black),),
+                        ),
+
+                      // Hide this message if searching
+                      if (_isSearching && audioPlayerModel.searchResults.isEmpty)
+                        Center(child: Text('No songs found')),
+                  // if (!_isSearching)
+                  //   Expanded(
+                  //     child: ListView.builder(
+                  //       itemCount: audioPlayerModel.songs.length,
+                  //       itemBuilder: (context, index) {
+                  //         final song = audioPlayerModel.songs[index];
+                  //         return ListTile(
+                  //           title: Text(song.songname),
+                  //           onTap: () {
+                  //             // Play the song when tapped
+                  //             audioPlayerModel.playCurrentSong();
+                  //           },
+                  //         );
+                  //       },
+                  //     ),
+                  //   ),
+                  ],),
                 ],
               ),
             ),
@@ -152,7 +173,7 @@ class _HomeState extends State<Home> {
                 //     prefixIcon: Icon(Icons.search),
                 //   ),
                 // ),
-                // SizedBox(height: 30,),
+                SizedBox(height: 30,),
 
                 // Artist List
                 Padding(
@@ -257,48 +278,6 @@ class _HomeState extends State<Home> {
                     },
                   ),
                 ),
-                // UiHelper.customText("Top Artist", color:Colors.white,fontsize:  20),
-                // SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   child: Row(
-                //     children: [
-                //       // IconButton(onPressed: (){
-                //       //   Navigator.push(context, MaterialPageRoute(builder: (context)=>AudioPlayerWidget()));
-                //       // }, icon: Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),)
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       // Image.network("https://i.scdn.co/image/ab67616d0000b2735c2e8fa840241ce6adf33a35",height: 150,width: 120,),
-                //       // SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width:20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://https://i.scdn.co/image/ab67616d00001e021ad922dae0ba39e07cc15038",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //     ],
-                //   ),
-                // ),
-
-                // UiHelper.customText("India's Best",  color:Colors.white,fontsize:  20),
-                // SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   child: Row(
-                //     children: [
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67706c0000da84c6567ac6fe1cb8b9ad541b52",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width:20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       // Image.network("https://https://i.scdn.co/image/ab67616d0000b2735c2e8fa840241ce6adf33a35",height: 150,width: 120,),
-                //     ],
-                //   ),
-                // ),
 
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -333,90 +312,14 @@ class _HomeState extends State<Home> {
                     );
                   },
                 ),
-                // UiHelper.customText("Songs that you may like", color:Colors.white,fontsize:  20),
-                // SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   child: Row(
-                //     children: [
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67706c0000da84c6567ac6fe1cb8b9ad541b52",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width:20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       // Image.network("https://https://i.scdn.co/image/ab67616d0000b2735c2e8fa840241ce6adf33a35",height: 150,width: 120,),
-                //     ],
-                //   ),
-                // ),
-                // SizedBox(height: 30,),
-                // UiHelper.customText("Top Mixes",  color:Colors.white,fontsize:  20),
-                // SingleChildScrollView(
-                //   scrollDirection: Axis.horizontal,
-                //   child: Row(
-                //     children: [
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67706c0000da84c6567ac6fe1cb8b9ad541b52",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width:20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       Image.network("https://i.scdn.co/image/ab67616d0000b273459c4f1a89716e40ed5ff12b",height: 150,width: 120,),
-                //       SizedBox(width: 20,),
-                //       // Image.network("https://https://i.scdn.co/image/ab67616d0000b2735c2e8fa840241ce6adf33a35",height: 150,width: 120,),
-                //     ],
-                //   ),
-                // ),
+
               ],
             ),
           ),
         ),
       ),
       backgroundColor: Colors.black,
-      // floatingActionButton: floatingActionItem,
+      // floaingActionButton: floatingActionItem,
     );
   }
-// get floatingActionItem {
-//   Widget floatingPlayer = GestureDetector(
-//     child: Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
-//       children: [
-//         SizedBox(width: 35,),
-//         Container(
-//           height: 125,
-//           width: 325,
-//           color: Colors.teal,
-//         ),
-//       ],
-//     ),
-//     onTap: () {
-//       setState(() {
-//         isPlayerOpened = false;
-//       });
-//     },
-//   );
-//
-//   Widget floatingActionButton = FloatingActionButton(
-//     onPressed: () {
-//       setState(() {
-//         isPlayerOpened = true;
-//       });
-//     },
-//     child: Icon(Icons.play_arrow_outlined),
-//   );
-//
-//   return AnimatedSwitcher(
-//     reverseDuration: Duration(milliseconds: 0),
-//     duration: const Duration(milliseconds: 200),
-//     transitionBuilder: (Widget child, Animation<double> animation) {
-//       return ScaleTransition(child: child, scale: animation);
-//     },
-//     child: isPlayerOpened ? floatingPlayer : floatingActionButton,
-//   );
-// }
 }

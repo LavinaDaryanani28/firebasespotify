@@ -38,6 +38,8 @@ class AudioPlayerModel with ChangeNotifier {
   List<AlbumModel> get album => _album;
   List<Song> get likedSongs => _likedSongs;
   RepeatMode get repeatMode => _repeatMode;
+  List<Map<dynamic, dynamic>> _searchResults = [];
+  List<Map<dynamic, dynamic>> get searchResults => _searchResults;
 
   AudioPlayerModel() {
     _initializeAudioPlayer();
@@ -67,6 +69,33 @@ class AudioPlayerModel with ChangeNotifier {
     _audioPlayer.onPlayerComplete.listen((event) {
       next(); // Play the next song when the current one finishes
     });
+  }
+  Future<void> searchSongs(String query) async {
+    print("Search query: $query");
+    if (query.isEmpty) {
+      _searchResults = [];  // Clear search results if the query is empty
+      notifyListeners();
+      return;
+    }
+
+    DatabaseEvent event = await ref.once();
+    DataSnapshot snapshot = event.snapshot;
+
+    if (snapshot.value != null) {
+      List<Map<dynamic, dynamic>> searchResults= [];
+      Map<dynamic, dynamic> rawData = snapshot.value as Map<dynamic, dynamic>;
+
+      rawData.forEach((key, song) {
+        final songTitle = song['songname'].toString().toLowerCase();
+        final searchQuery = query.toLowerCase();
+
+        if (songTitle.contains(searchQuery)) {
+          searchResults.add(song);
+        }
+      });
+      _searchResults = searchResults;
+      notifyListeners();
+    }
   }
 
   Future<void> fetchAlbum() async {
