@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:spotifyfirebase/albums.dart';
+import 'package:spotifyfirebase/artistalbums.dart';
+import 'package:spotifyfirebase/albumsongs.dart';
 import 'package:spotifyfirebase/artist.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
@@ -259,7 +260,7 @@ class _HomeState extends State<Home> {
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => Album(albumModel:album)));
+                              MaterialPageRoute(builder: (context) => AlbumSongs(albumModel:album)));
                         },
                         child: Container(
                           // color: Colors.grey,

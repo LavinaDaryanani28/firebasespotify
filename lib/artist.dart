@@ -8,7 +8,7 @@ import 'package:spotifyfirebase/uihelper.dart';
 
 import 'AudioPlayerModel.dart';
 import 'Song.dart';
-import 'albums.dart';
+import 'artistalbums.dart';
 
 double _appTopBarHeight = 40;
 
@@ -57,7 +57,10 @@ class Artist extends StatelessWidget {
     //     .where((el) => el.artist == artistname.toLowerCase())
     //     .toList();
 
-    List<Song> artistSongs = audioPlayerModel.songs.where((el)=>el.artist.toLowerCase() == artistModel.artistname.toLowerCase()).toList();
+    List<Song> artistSongs = audioPlayerModel.songs
+        .where((el) =>
+            el.artist.toLowerCase() == artistModel.artistname.toLowerCase())
+        .toList();
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -93,7 +96,8 @@ class Artist extends StatelessWidget {
                                     width: double.infinity,
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
-                                        image: NetworkImage("https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
+                                        image: NetworkImage(
+                                            "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
                                         fit: BoxFit.cover,
                                       ),
                                       borderRadius: BorderRadius.only(
@@ -115,10 +119,11 @@ class Artist extends StatelessWidget {
                               forecolor: Colors.white,
                               side: 1.0,
                               sidecolor: Colors.white, callback: () {
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) => Album()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ArtistAlbums(
+                                        artistModel: artistModel)));
                           }),
                           Spacer(),
                           UiHelper.iconBtn(25,

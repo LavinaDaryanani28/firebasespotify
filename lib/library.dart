@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:spotifyfirebase/LikedSongs.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
-import 'albums.dart';
+import 'artistalbums.dart';
 import 'artist.dart';
 import 'librarycontroller.dart';
 

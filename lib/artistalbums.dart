@@ -7,8 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:spotifyfirebase/AlbumModel.dart';
 import 'package:spotifyfirebase/AudioPlayerModel.dart';
 import 'package:spotifyfirebase/Song.dart';
+import 'package:spotifyfirebase/albumsongs.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
+import 'ArtistModel.dart';
 import 'artist.dart';
 
 double _appTopBarHeight = 40;
@@ -79,27 +81,27 @@ var arrContent = [
 
 final borderside = BorderSide(color: Colors.white, width: 2);
 
-class Album extends StatelessWidget {
-  late AlbumModel albumModel;
-  Album({required this.albumModel});
+class ArtistAlbums extends StatelessWidget {
+  late ArtistModel artistModel;
+  ArtistAlbums({required this.artistModel});
 
   @override
   Widget build(BuildContext context){
   final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
-    List<Song> albumsongs = audioPlayerModel.songs.where((el)=>el.album.toLowerCase() == albumModel.albumname.toLowerCase()).toList();
+    List<AlbumModel> albums = audioPlayerModel.album.where((el)=>artistModel.albums.contains(el.albumname)).toList();
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              delegate: MyDelegate(albumModel:albumModel),
+              delegate: MyDelegate(artistModel:artistModel),
               floating: true,
               pinned: true,
             ),
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
+                (context, int index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 10, horizontal: 10),
@@ -163,29 +165,33 @@ class Album extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(
                         vertical: 20, horizontal: 10),
-                    child: Container(
-                      alignment: Alignment.center,
-                      color: Colors.black,
-                      child: Column(
-                        children: [
-                          IconButton(
-                              onPressed: () {},
-                              icon: Image.network(
-                                  albumsongs[index].photo)),
-                          // UiHelper.iconBtn(30,imagePath:  "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
-                          // Image.network(
-                          //     "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
-                          //   ),
-                          UiHelper.customText(
-                              albumsongs[index].songname,
-                              color: Colors.white,
-                              fontsize: 20),
-                        ],
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AlbumSongs(albumModel: albums[index],artistname:artistModel.artistname)));
+                      },
+                      child: Container(
+                        height: 40.h,
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            Image.network(
+                                    albums[index].photo,height: 140.h,width: 140.w,),
+                            // UiHelper.iconBtn(30,imagePath:  "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
+                            // Image.network(
+                            //     "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
+                            //   ),
+                            UiHelper.customText(
+                                albums[index].albumname,
+                                color: Colors.white,
+                                fontsize: 20),
+                          ],
+                        ),
                       ),
                     ),
                   );
                 },
-                childCount: albumsongs.length,
+                childCount: albums.length,
               ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -307,8 +313,8 @@ class Album extends StatelessWidget {
 }
 
 class MyDelegate extends SliverPersistentHeaderDelegate {
-  late AlbumModel albumModel;
-  MyDelegate({required this.albumModel});
+  late ArtistModel artistModel;
+  MyDelegate({required this.artistModel});
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -337,7 +343,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     fit: BoxFit.fitWidth,
                     alignment: FractionalOffset.topCenter,
                     image: NetworkImage(
-                      albumModel.photo,
+                      artistModel.photo,
                     ),
                   )),
                 ),
@@ -380,7 +386,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           //   child:
                           Opacity(
                             opacity: shrinkPercentage,
-                            child: UiHelper.customText(albumModel.albumname,
+                            child: UiHelper.customText(artistModel.artistname,
                                 fontweight: FontWeight.bold,
                                 fontsize: 20,
                                 color: Colors.white),
@@ -397,7 +403,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     child: Column(
                       children: [
                         SizedBox(height: 70),
-                        UiHelper.customText(albumModel.albumname,
+                        UiHelper.customText(artistModel.artistname,
                             fontweight: FontWeight.bold,
                             fontsize: 60,
                             color: Colors.white),

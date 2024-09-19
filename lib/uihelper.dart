@@ -112,6 +112,7 @@ class UiHelper {
       text,
       style:
       TextStyle(fontSize: fontsize, color: color, fontWeight: fontweight),
+      maxLines: 1,
       textAlign: align,
     );
   }

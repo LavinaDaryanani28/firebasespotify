@@ -20,7 +20,7 @@ class MiniPlayerWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            audioPLayerModel.songs.isEmpty ? CircularProgressIndicator() : Text(
               context.read<AudioPlayerModel>().currentSongName.toString(),
               style: TextStyle(color: Colors.white),
             ),
