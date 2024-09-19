@@ -34,6 +34,11 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
+
+    // Filter the list based on the search query
+    final filteredSongs = audioPlayerModel.songs
+        .where((song) => song.songname.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .toList();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -49,70 +54,103 @@ class _HomeState extends State<Home> {
                       color: Colors.white,
                       fontsize: 30,
                       fontweight: FontWeight.bold),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Column(
-                    children:[ TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Search',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          prefixIcon: Icon(Icons.search),
-                        ),
-                        onChanged:  (query) {
-                          setState(() {
-                            _searchQuery = query;
-                            _isSearching = query.isNotEmpty;
-                          });
-                          // Call the search function whenever the query changes
-                          audioPlayerModel.searchSongs(query);
-                        },
-                      ),
-                      if (_isSearching && audioPlayerModel.searchResults.isNotEmpty)
-                        // Expanded(
-                        //     child: ListView.builder(
-                        //       itemCount: audioPlayerModel.searchResults.length,
-                        //       itemBuilder: (context, index) {
-                        //         final song = audioPlayerModel.searchResults[index];
-                        //         return ListTile(
-                        //           title: Text(song['songname']),
-                        //           onTap: () {
-                        //             // Play the selected song
-                        //             audioPlayerModel.playCurrentSong(); // Play the song URL
-                        //             setState(() {
-                        //               _searchQuery = song['songname'];
-                        //               _isSearching = false;
-                        //             });
-                        //           },
-                        //         );
-                        //       },
-                        //     ),
-                        // ),
-                        DropdownButton<String>(
-                          items: audioPlayerModel.searchResults.map((song) {
-                            final songName = song['songname'];
-                            // Debugging: Check if the song name is correctly fetched
-                            log('Song found: $songName');
-                            return DropdownMenuItem<String>(
-                              value: song['songname'],
-                              child: Text(song['songname']??"Unknown song",style: TextStyle(color: Colors.white),),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _searchQuery = value!;
-                              _isSearching = false;
-                            });
-                            audioPlayerModel.playCurrentSong();
-                          },
-                          isExpanded: true,
-                          hint: Text("Select a song",style: TextStyle(color: Colors.black),),
-                        ),
-
-                      // Hide this message if searching
-                      if (_isSearching && audioPlayerModel.searchResults.isEmpty)
-                        Center(child: Text('No songs found')),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  // Column(
+                  //   children:[ TextField(
+                  //       decoration: InputDecoration(
+                  //         labelText: 'Search',
+                  //         border: OutlineInputBorder(
+                  //             borderRadius: BorderRadius.circular(20)),
+                  //         prefixIcon: Icon(Icons.search),
+                  //       ),
+                  //       onChanged:  (query) {
+                  //         setState(() {
+                  //           _searchQuery = query;
+                  //           _isSearching = query.isNotEmpty;
+                  //         });
+                  //         // Call the search function whenever the query changes
+                  //         audioPlayerModel.searchSongs(query);
+                  //       },
+                  //     ),
+                  //     if (_isSearching && audioPlayerModel.searchResults.isNotEmpty)
+                  //     ListView.builder(
+                  //       itemCount: filteredSongs.length,
+                  //       itemBuilder: (context, index) {
+                  //         final song = filteredSongs[index];
+                  //         return ListTile(
+                  //           title: Text(song.songname, style: TextStyle(color: Colors.white)),
+                  //           subtitle: Text(song.artist, style: TextStyle(color: Colors.grey)),
+                  //           onTap: () {
+                  //             audioPlayerModel.currentIndex = index;
+                  //             audioPlayerModel.playCurrentSong();
+                  //           },
+                  //         );
+                  //       },
+                  //     ),
+                      // if (_isSearching && audioPlayerModel.searchResults.isNotEmpty)
+                      //   // Expanded(
+                      //   //     child: ListView.builder(
+                      //   //       itemCount: audioPlayerModel.searchResults.length,
+                      //   //       itemBuilder: (context, index) {
+                      //   //         final song = audioPlayerModel.searchResults[index];
+                      //   //         return ListTile(
+                      //   //           title: Text(song['songname']),
+                      //   //           onTap: () {
+                      //   //             // Play the selected song
+                      //   //             audioPlayerModel.playCurrentSong(); // Play the song URL
+                      //   //             setState(() {
+                      //   //               _searchQuery = song['songname'];
+                      //   //               _isSearching = false;
+                      //   //             });
+                      //   //           },
+                      //   //         );
+                      //   //       },
+                      //   //     ),
+                      //   // ),
+                      //   DropdownButton<String>(
+                      //     items: audioPlayerModel.searchResults.map((song) {
+                      //
+                      //       final songName = song['songname'];
+                      //       // Debugging: Check if the song name is correctly fetched
+                      //       log('Song found: $songName');
+                      //       return DropdownMenuItem<String>(
+                      //         value: song['songname'],
+                      //         child: Text(song['songname']??"Unknown song",style: TextStyle(color: Colors.white),),
+                      //       );
+                      //     }).toList(),
+                      //     onChanged: (value) {
+                      //       setState(() {
+                      //         _searchQuery = value!;
+                      //         _isSearching = false;
+                      //       });
+                      //       audioPlayerModel.playCurrentSong();
+                      //     },
+                      //     isExpanded: true,
+                      //     hint: Text("Select a song",style: TextStyle(color: Colors.black),),
+                      //     dropdownColor: Colors.grey[900], // Set dropdown background color
+                      //     icon: Icon(
+                      //       Icons.arrow_drop_down,
+                      //       color: Colors.white,         // Set dropdown icon color
+                      //       size: 24,                    // Set icon size
+                      //     ),
+                      //     style: TextStyle(
+                      //       color: Colors.white,         // Set selected text color
+                      //       fontSize: 16.0,              // Set selected text font size
+                      //     ),
+                      //     underline: Container(
+                      //       height: 2,
+                      //       color: Colors.white,         // Set underline color
+                      //     ),
+                      //     borderRadius: BorderRadius.circular(12), // Set dropdown item border radius
+                      //     iconEnabledColor: Colors.white,          // Color of the dropdown arrow when enabled
+                      //     iconDisabledColor: Colors.grey,
+                      //   ),
+                      //
+                      // // Hide this message if searching
+                      // if (_isSearching && audioPlayerModel.searchResults.isEmpty)
+                      //   Center(child: Text('No songs found')),
                   // if (!_isSearching)
                   //   Expanded(
                   //     child: ListView.builder(
@@ -129,7 +167,7 @@ class _HomeState extends State<Home> {
                   //       },
                   //     ),
                   //   ),
-                  ],),
+                  // ],),
                 ],
               ),
             ),
@@ -152,29 +190,6 @@ class _HomeState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // SliverStickyHeaderBuilder(builder: (context,i)=>Text("Good morning")),
-                // CustomScrollView(
-                //   slivers: [
-                //     SliverAppBar(
-                //       backgroundColor: Colors.black,
-                //       title: Text("Good morning"),
-                //       floating: true,
-                //       pinned: true,
-                //     )
-                //   ],
-                // ),
-                // TopBar(),
-                // UiHelper.customText("Good Morning",color: Colors.white,fontsize: 30),
-                // SizedBox(height: 10,),
-                // TextField(
-                //   decoration: InputDecoration(
-                //     labelText: 'Search',
-                //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                //     prefixIcon: Icon(Icons.search),
-                //   ),
-                // ),
-                SizedBox(height: 30,),
-
                 // Artist List
                 Padding(
                   padding: const EdgeInsets.all(8.0),

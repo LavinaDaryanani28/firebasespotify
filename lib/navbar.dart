@@ -14,7 +14,7 @@ import 'package:spotifyfirebase/musicPlayer.dart';
 import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/settings.dart';
 
-import 'Song.dart';
+import 'Search.dart';
 enum RepeatMode {
   noRepeat,
   repeatOne,
@@ -40,7 +40,9 @@ class _NavigationbarState extends State<NavBar> {
     List<Widget> _pages = [
       Home(),
       Library(),
+      Search(),
       Setting(),
+
     ];
 
     return Scaffold(
@@ -64,6 +66,10 @@ class _NavigationbarState extends State<NavBar> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.library_music_outlined,color: Colors.white,size: 30,),
                 label: 'Library',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.search,color: Colors.white,size: 30,),
+                label: 'Search',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person,color: Colors.white,size: 30,),

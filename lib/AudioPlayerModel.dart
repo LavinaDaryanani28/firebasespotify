@@ -21,9 +21,11 @@ class AudioPlayerModel with ChangeNotifier {
   bool isShuffled = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
-  String? currentSongUrl;
-  String? currentSongName;
-  String? currentSongPhoto;
+  String? _currentSongUrl;
+  String? _currentSongName;
+  String? _currentSongPhoto;
+  String? _currentSongArtist;
+  String? _currentSongAlbum;
   List<Song> _songs = []; // List of songs
   List<ArtistModel> _artist = [];
   List<AlbumModel> _album = [];
@@ -41,6 +43,11 @@ class AudioPlayerModel with ChangeNotifier {
   List<Map<dynamic, dynamic>> _searchResults = [];
   List<Map<dynamic, dynamic>> get searchResults => _searchResults;
 
+  String get currentSongName => _currentSongName!;
+  String get currentSongUrl => _currentSongUrl!;
+  String get currentSongPhoto => _currentSongPhoto!;
+  String get currentSongArtist => _currentSongArtist!;
+  String get currentSongAlbum => _currentSongAlbum!;
   AudioPlayerModel() {
     _initializeAudioPlayer();
   }
@@ -247,6 +254,41 @@ class AudioPlayerModel with ChangeNotifier {
       log("Error fetching songs: $e");
     }
   }
+  Future<void> removeSongFromLiked(String songName) async {
+    try {
+      // Reference to the Firebase Realtime Database
+      ref = FirebaseDatabase.instance.ref('likedSongs');
+
+      // Fetch the liked songs
+      DatabaseEvent event = await ref.once();
+      DataSnapshot snapshot = event.snapshot;
+
+      if (snapshot.value != null && snapshot.value is Map) {
+        final likedSongsMap = snapshot.value as Map<dynamic, dynamic>;
+        log(likedSongsMap.toString());
+        var filteredSongs = likedSongsMap.entries.where((entry) => entry.value['songname'] == songName);
+        log(filteredSongs.toString());
+        if (filteredSongs.isNotEmpty) {
+          // If song is found, get the first match
+          var songKeyToRemove = filteredSongs.first.key;
+          await ref.child(songKeyToRemove).remove().then((_) {
+            // Update UI after successful removal
+            _likedSongs.removeWhere((song) => song.songname == songName); // Remove locally
+            notifyListeners();
+          });
+          print('Successfully removed song with name: $songName');
+        } else {
+          print('Song with name $songName not found in liked list');
+        }
+        notifyListeners();
+      } else {
+        print('No liked songs found or incorrect data format');
+      }
+    } catch (e) {
+      print('Error removing song: $e');
+    }
+  }
+
   Future<void> fetchLiked() async {
     try {
       ref = FirebaseDatabase.instance.ref('likedSongs');
@@ -263,12 +305,14 @@ class AudioPlayerModel with ChangeNotifier {
             _likedSongs = rawData
                 .map((el) => Song.fromDocument(el ?? {})) // Ensure element is not null
                 .toList();
+            notifyListeners();
           } else if (snapshot.value is Map) {
             Map<dynamic, dynamic> rawData = snapshot.value as Map<dynamic, dynamic>;
 
             _likedSongs = rawData.values
                 .map((el) => Song.fromDocument(el ?? {})) // Ensure element is not null
                 .toList();
+            notifyListeners();
           } else {
             print("Error: Unsupported data type.");
           }
@@ -277,10 +321,12 @@ class AudioPlayerModel with ChangeNotifier {
           if (_likedSongs.isNotEmpty) {
 
 
-            _setCurrentSong(0); // Set the first song as the current song
+            _setCurrentSong(0);
+            // Set the first song as the current song
           } else {
             log("Error: No songs available");
           }
+          log("likedSongs"+_likedSongs.toString());
           notifyListeners();
           // example to get specific record only
           // log("arijit singh: ${_songs.where((el) => el.artist == 'arijit singh')}");
@@ -290,33 +336,59 @@ class AudioPlayerModel with ChangeNotifier {
       } catch (e) {
         print("Error: $e");
       }
-
-      // final snapshot =
-      //     await FirebaseFirestore.instance.collection('trial').get();
-      // log("Fetched songs from Firestore: ${snapshot.docs.length}");
-      // _songs = snapshot.docs.map((doc) => Song.fromDocument(doc)).toList();
-      // _shuffledSongs = List.from(_songs)..shuffle(); // Initialize shuffled list
-      // if (_songs.isNotEmpty) {
-      //   _setCurrentSong(0); // Set the first song as the current song
-      // }
-      // notifyListeners(); // Notify listeners after fetching songs
     } catch (e) {
       log("Error fetching liked Songs: $e");
+    }
+  }
+
+  Future<void> addCurrentSongToLiked() async {
+    try {
+      // Verify Firebase instance
+      ref = FirebaseDatabase.instance.ref('likedSongs');
+      print('Firebase reference initialized.');
+
+      // Create a map with the current song details
+      Map<String, dynamic> likedSong = {
+        'songname': _currentSongName,
+        'url': _currentSongUrl,
+        'photo': _currentSongPhoto
+      };
+
+      // Log the song data being sent
+      print('Pushing song to Firebase: $likedSong');
+
+      // Push the song to the likedSongs node
+      await ref.push().set(likedSong);
+      // Manually add the song to _likedSongs list for immediate feedback
+      _likedSongs.add(Song(
+          songname: _currentSongName!,
+          url: _currentSongUrl!,
+          photo: _currentSongPhoto!, artist: _currentSongArtist!, album: _currentSongAlbum!
+      ));
+      notifyListeners();
+      print('Song added to likedSongs: ${_currentSongName}');
+
+
+    } catch (e, stackTrace) {
+      print('Error adding song to likedSongs: $e');
+      print('StackTrace: $stackTrace');
     }
   }
   void _setCurrentSong(int index) {
     if (index >= 0 && index < songs.length) {
       currentIndex = index;
-      currentSongUrl = songs[currentIndex].url;
-      currentSongName = songs[currentIndex].songname;
-      currentSongPhoto = songs[currentIndex].photo;
+      _currentSongUrl = songs[currentIndex].url;
+      _currentSongName = songs[currentIndex].songname;
+      _currentSongPhoto = songs[currentIndex].photo;
+      _currentSongArtist = songs[currentIndex].artist;
+      _currentSongAlbum = songs[currentIndex].album;
       notifyListeners();
     }
   }
 
   void play() async {
-    if (currentSongUrl != null) {
-      await _audioPlayer.play(UrlSource(currentSongUrl!));
+    if (_currentSongUrl != null) {
+      await _audioPlayer.play(UrlSource(_currentSongUrl!));
     }
   }
 
@@ -409,9 +481,9 @@ class AudioPlayerModel with ChangeNotifier {
   Future<void> playCurrentSong() async {
     if (_songs.isNotEmpty) {
       final song = songs[currentIndex];
-      currentSongUrl = song.url;
-      currentSongName = song.songname;
-      currentSongPhoto = song.photo;
+      _currentSongUrl = song.url;
+      _currentSongName = song.songname;
+      _currentSongPhoto = song.photo;
       await _audioPlayer.play(UrlSource(song.url));
       isPlaying = true;
       notifyListeners();

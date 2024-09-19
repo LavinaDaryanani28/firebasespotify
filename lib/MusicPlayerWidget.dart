@@ -25,10 +25,7 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
   late Duration position;
   late String url;
   late DatabaseReference ref;
-  @override
-  void initState(){
-    ref = FirebaseDatabase.instance.ref('likedSongs');
-  }
+
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
@@ -100,17 +97,24 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         ),
         UiHelper.iconBtn(
           30,
-          icondata: Icons.add_circle_outline_outlined,
+          // Change the icon depending on whether the song is already liked or not
+          icondata: audioPlayerModel.likedSongs.any((song) =>
+          song.songname == audioPlayerModel.currentSongName)
+              ? Icons.remove_circle_outline_outlined
+              : Icons.add_circle_outline_outlined,
           color: Colors.white,
-          callback:(){
-            Map<dynamic,dynamic> likedSongs={
-              'songname':audioPlayerModel.currentSongName,
-              'url':audioPlayerModel.currentSongUrl,
-              'photo':audioPlayerModel.currentSongPhoto
-            };
-            ref.push().set(likedSongs);
-            log(likedSongs.toString());
-          }
+          callback: () async {
+            // Check if the current song is already in the liked songs list
+            bool isAlreadyLiked = audioPlayerModel.likedSongs.any((song) =>
+            song.songname == audioPlayerModel.currentSongName);
+log(isAlreadyLiked.toString());
+            if (isAlreadyLiked) {
+              await audioPlayerModel.removeSongFromLiked(audioPlayerModel.currentSongName);
+            } else {
+              // Add the song if it's not in the liked list
+              await audioPlayerModel.addCurrentSongToLiked();
+            }
+          },
         ),
       ],
     );

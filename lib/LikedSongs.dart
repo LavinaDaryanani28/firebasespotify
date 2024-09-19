@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,7 @@ class _LikedSongsState extends State<LikedSongs> {
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
+    log("Liked songs"+audioPlayerModel.likedSongs.toString());
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -37,12 +40,14 @@ class _LikedSongsState extends State<LikedSongs> {
                       color: Colors.white,
                       fontweight: FontWeight.bold),
                 ),
+
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: audioPlayerModel.likedSongs.length,
                   itemBuilder: (context, index) {
                     final song = audioPlayerModel.likedSongs[index];
+                    log(song.toString());
                     return ListTile(
                       leading: Icon(Icons.music_note),
                       title: Text(song.songname),
