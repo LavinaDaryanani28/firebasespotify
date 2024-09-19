@@ -9,6 +9,7 @@ import 'package:spotifyfirebase/AudioPlayerModel.dart';
 import 'package:spotifyfirebase/Song.dart';
 import 'package:spotifyfirebase/uihelper.dart';
 
+import 'ArtistModel.dart';
 import 'artist.dart';
 
 double _appTopBarHeight = 40;
@@ -16,20 +17,23 @@ double _appTopBarHeight = 40;
 final borderside = BorderSide(color: Colors.white, width: 2);
 
 class AlbumSongs extends StatelessWidget {
-  late AlbumModel albumModel;
-  AlbumSongs({required this.albumModel});
+  final AlbumModel albumModel;
+  final String? artistname;
+  AlbumSongs({required this.albumModel,this.artistname});
 
   @override
   Widget build(BuildContext context){
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
-    List<Song> albumsongs = audioPlayerModel.songs.where((el)=>el.album.toLowerCase() == albumModel.albumname.toLowerCase()).toList();
+
+    List<Song> albumsongs = audioPlayerModel.songs.where((el)=>el.album.toLowerCase() == albumModel.albumname.toLowerCase() && el.artist.toLowerCase() == artistname!.toLowerCase()).toList();
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              delegate: MyDelegate(albumModel:albumModel),
+              delegate: MyDelegate(albumModel:albumModel!),
               floating: true,
               pinned: true,
             ),
