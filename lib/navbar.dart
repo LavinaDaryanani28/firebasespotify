@@ -53,26 +53,28 @@ class _NavigationbarState extends State<NavBar> {
           // miniPlayer(),
           MiniPlayerWidget(),
           BottomNavigationBar(
-            unselectedLabelStyle: const TextStyle(color: Colors.white, fontSize: 14),
-            fixedColor: Colors.white,
+            type: BottomNavigationBarType.fixed,
+            unselectedLabelStyle: const TextStyle(fontSize: 14),
+            selectedItemColor: Colors.green ,
+            // fixedColor: Colors.white,
             unselectedItemColor: Colors.white,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
             items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home,color: Colors.white,size: 30,),
+                icon: Icon(Icons.home,size: 30,),
                 label: 'Home',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.library_music_outlined,color: Colors.white,size: 30,),
+                icon: Icon(Icons.library_music_outlined,size: 30,),
                 label: 'Library',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.search,color: Colors.white,size: 30,),
+                icon: Icon(Icons.search,size: 30,),
                 label: 'Search',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.person,color: Colors.white,size: 30,),
+                icon: Icon(Icons.person,size: 30,),
                 label: 'Profile',
               ),
             ],

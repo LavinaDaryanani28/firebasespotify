@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotifyfirebase/signup.dart';
 
-
 class UiHelper {
   static customButton(String text,
       {double? fontsize,
-        FontWeight? fontweight,
-        double? borderradius,
-        Color? bgcolor,
-        Color? forecolor,
-        double? height,
-        double? width,
-        VoidCallback? callback,
-        double? side,
-        Color? sidecolor}) {
+      FontWeight? fontweight,
+      double? borderradius,
+      Color? bgcolor,
+      Color? forecolor,
+      double? height,
+      double? width,
+      VoidCallback? callback,
+      double? side,
+      Color? sidecolor}) {
     return SizedBox(
       height: height,
       width: width,
@@ -40,15 +39,15 @@ class UiHelper {
 
   static customRowButton(String imgpath, String text,
       [double? vpadding,
-        double? hpadding,
-        double? sizeboxwidth,
-        double? fontsize,
-        FontWeight? fontweight,
-        Color? txtcolor,
-        double? borderradius,
-        double? bordersidewidth,
-        Color? bordercolor,
-        VoidCallback? callback]) {
+      double? hpadding,
+      double? sizeboxwidth,
+      double? fontsize,
+      FontWeight? fontweight,
+      Color? txtcolor,
+      double? borderradius,
+      double? bordersidewidth,
+      Color? bordercolor,
+      VoidCallback? callback]) {
     return OutlinedButton(
       onPressed: () {
         // callback!();
@@ -56,7 +55,7 @@ class UiHelper {
       child: Row(children: [
         Padding(
           padding:
-          EdgeInsets.symmetric(vertical: vpadding!, horizontal: hpadding!),
+              EdgeInsets.symmetric(vertical: vpadding!, horizontal: hpadding!),
           child: Image.network(imgpath),
         ),
         customSizebox(width: sizeboxwidth),
@@ -81,10 +80,10 @@ class UiHelper {
 
   static customTextField(TextEditingController controller, String text,
       {IconData? icondata,
-        Color? focuscolor,
-        double? borderradius,
-        bool? password,
-        VoidCallback? callback}) {
+      Color? focuscolor,
+      double? borderradius,
+      bool? password,
+      VoidCallback? callback}) {
     return TextField(
       controller: controller,
       obscureText: password != null ? true : false,
@@ -104,14 +103,14 @@ class UiHelper {
 
   static customText(String text,
       {Color? color,
-        double? fontsize,
-        FontWeight? fontweight,
-        TextAlign? align}) {
+      double? fontsize,
+      FontWeight? fontweight,
+      TextAlign? align}) {
     return Text(
       overflow: TextOverflow.ellipsis,
       text,
       style:
-      TextStyle(fontSize: fontsize, color: color, fontWeight: fontweight),
+          TextStyle(fontSize: fontsize, color: color, fontWeight: fontweight),
       maxLines: 1,
       textAlign: align,
     );
@@ -125,44 +124,44 @@ class UiHelper {
           return AlertDialog(
             title: Text(text),
             // content: ,
-            actions: alertbtn == "logout" ||alertbtn == "createPlaylist"
+            actions: alertbtn == "logout" || alertbtn == "createPlaylist"
                 ? [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('Cancel'),
-              ),
-              alertbtn == "logout"
-                  ? TextButton(
-                onPressed: () async {
-                  SharedPreferences preferences =
-                  await SharedPreferences.getInstance();
-                  await preferences.clear();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => navigateTo!));
-                },
-                child: Text('OK'),
-              )
-                  : alertbtn == "createPlaylist"
-                  ? TextButton(
-                onPressed: () {
-                  callback!();
-                  // Navigator.of(context).pop();
-                },
-                child: Text('Ok'),
-              )
-                  : Text("Hello"),
-            ]
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    alertbtn == "logout"
+                        ? TextButton(
+                            onPressed: () async {
+                              SharedPreferences preferences =
+                                  await SharedPreferences.getInstance();
+                              await preferences.clear();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => navigateTo!));
+                            },
+                            child: Text('OK'),
+                          )
+                        : alertbtn == "createPlaylist"
+                            ? TextButton(
+                                onPressed: () {
+                                  callback!();
+                                  // Navigator.of(context).pop();
+                                },
+                                child: Text('Ok'),
+                              )
+                            : Text("Hello"),
+                  ]
                 : [
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("ok"))
-            ],
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text("ok"))
+                  ],
 
             // TextButton(
             //           onPressed: () {
@@ -193,9 +192,9 @@ class UiHelper {
 
   static customTextButton(String text,
       {Color? color,
-        FontWeight? fontweight,
-        double? fontsize,
-        VoidCallback? callback}) {
+      FontWeight? fontweight,
+      double? fontsize,
+      VoidCallback? callback}) {
     return TextButton(
         onPressed: () {
           callback!();
@@ -208,9 +207,9 @@ class UiHelper {
   static expansionTile(String text, Color color, double fontsize,
       String listText, Color listcolor, double listfontsize,
       {VoidCallback? callback,
-        double? width,
-        bool? isSwitched,
-        VoidCallback? callbackChange}) {
+      double? width,
+      bool? isSwitched,
+      VoidCallback? callbackChange}) {
     return ExpansionTile(
       title: UiHelper.customText(text, color: color, fontsize: fontsize),
       childrenPadding: EdgeInsets.only(left: 40),
@@ -250,40 +249,40 @@ class UiHelper {
   // }
   static iconBtn(double IconSize,
       {Color? color,
-        IconData? icondata,
-        VoidCallback? callback,
-        bool? image,
-        String? imagePath,
-        double? height,
-        double? width}) {
+      IconData? icondata,
+      VoidCallback? callback,
+      bool? image,
+      String? imagePath,
+      double? height,
+      double? width}) {
     return IconButton(
       onPressed: () {
         callback!();
       },
       icon: image == true
           ? Image.network(
-        imagePath!,
-        height: height,
-        width: width,
-      )
+              imagePath!,
+              height: height,
+              width: width,
+            )
           : Icon(
-        icondata!,
-        color: color,
-      ),
+              icondata!,
+              color: color,
+            ),
       iconSize: IconSize,
     );
   }
 
   static customOutlinebtn(
-      double borderradius,
-      double side,
-      String text,
-      double fontsize,
-      FontWeight fontweight,
-      Color color,
-      Color sideColor, {
-        VoidCallback? callback,
-      }) {
+    double borderradius,
+    double side,
+    String text,
+    double fontsize,
+    FontWeight fontweight,
+    Color color,
+    Color sideColor, {
+    VoidCallback? callback,
+  }) {
     return OutlinedButton(
       onPressed: () {
         callback!();
@@ -316,6 +315,4 @@ class UiHelper {
           )),
     );
   }
-
 }
-

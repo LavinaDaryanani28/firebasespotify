@@ -169,25 +169,21 @@ class ArtistAlbums extends StatelessWidget {
                       onTap: (){
                         Navigator.push(context, MaterialPageRoute(builder: (context)=>AlbumSongs(albumModel: albums[index],artistname:artistModel.artistname)));
                       },
-                      child: Container(
-                        height: 40.h,
-                        alignment: Alignment.center,
-                        color: Colors.white,
-                        child: Column(
+                      child: Column(
                           children: [
-                            Image.network(
-                                    albums[index].photo,height: 140.h,width: 140.w,),
-                            // UiHelper.iconBtn(30,imagePath:  "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
-                            // Image.network(
-                            //     "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg",
-                            //   ),
-                            UiHelper.customText(
+                            Container(
+                              child: Image.network(
+                                      albums[index].photo,fit: BoxFit.fill,),
+                              height: 95.h,
+                              width: double.infinity,
+                            ),
+                            Padding(padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                            child :UiHelper.customText(
                                 albums[index].albumname,
                                 color: Colors.white,
-                                fontsize: 20),
+                                fontsize: 15,fontweight: FontWeight.bold)),
                           ],
                         ),
-                      ),
                     ),
                   );
                 },
@@ -386,7 +382,8 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           //   child:
                           Opacity(
                             opacity: shrinkPercentage,
-                            child: UiHelper.customText(artistModel.artistname,
+                            child: UiHelper.customText(
+                                artistModel.artistname,
                                 fontweight: FontWeight.bold,
                                 fontsize: 20,
                                 color: Colors.white),
@@ -399,11 +396,11 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
 
                   Opacity(
                     opacity: max(1 - shrinkPercentage * 6, 0),
-                    // opacity: max(1 - shrinkPercentage * 6, 0),
                     child: Column(
                       children: [
                         SizedBox(height: 70),
-                        UiHelper.customText(artistModel.artistname,
+                        UiHelper.customText(
+                            artistModel.artistname,
                             fontweight: FontWeight.bold,
                             fontsize: 60,
                             color: Colors.white),

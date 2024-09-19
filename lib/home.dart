@@ -43,7 +43,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        toolbarHeight: 140.0.h, //set your height
+        toolbarHeight: 80.0.h, //set your height
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  UiHelper.customText("Good " + greetings(),
+                  UiHelper.customText("Good " + greetings() + "!",
                       color: Colors.white,
                       fontsize: 30,
                       fontweight: FontWeight.bold),
@@ -200,7 +200,7 @@ class _HomeState extends State<Home> {
                       fontweight: FontWeight.bold),
                 ),
                 Container(
-                  height: 130.h,
+                  height: 120.h,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: audioPlayerModel.artist.length,
@@ -307,9 +307,15 @@ class _HomeState extends State<Home> {
                   itemBuilder: (context, index) {
                     final song = audioPlayerModel.songs[index];
                     return ListTile(
-                      leading: Icon(Icons.music_note),
-                      title: Text(song.songname),
-                      subtitle: Text(song.artist),
+                      leading: Icon(Icons.music_note,color: Colors.white,),
+                      title: Text(song.songname,style:TextStyle(color: Colors.white)),
+                      subtitle: Row(
+                        children: [
+                          Text(song.artist,style:TextStyle(color: Colors.grey)),
+                          audioPlayerModel.isPlaying && audioPlayerModel.currentSongName ==
+                              song.songname?Icon(Icons.graphic_eq,color: Colors.green,):SizedBox.shrink()
+                        ],
+                      ),
                       onTap: () {
                         // Update the current song and play it when tapped
                         audioPlayerModel.currentIndex =
@@ -317,7 +323,11 @@ class _HomeState extends State<Home> {
                         audioPlayerModel.playCurrentSong();
                       },
                       trailing: Icon(
-                        Icons.play_arrow, // Show play icon
+                        audioPlayerModel.isPlaying &&
+                            audioPlayerModel.currentSongName ==
+                                song.songname
+                            ? Icons.pause  // Show green if the current song is playing
+                            : Icons.play_arrow, // Show play icon
                         color: audioPlayerModel.isPlaying &&
                                 audioPlayerModel.currentSongName ==
                                     song.songname

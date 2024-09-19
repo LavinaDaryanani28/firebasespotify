@@ -81,10 +81,11 @@ class AlbumSongs extends StatelessWidget {
                                       SizedBox(
                                         width: 15,
                                       ),
+                                      Expanded(child:
                                       UiHelper.customText(
                                           albumsongs[index].songname,
-                                          color: Colors.white),
-                                    Spacer(),
+                                          color: Colors.white,fontsize: 15)),
+                                    // Spacer(),
                                       IconButton(
                                         onPressed: () {},
                                         icon: Icon(Icons.more_vert),
@@ -113,6 +114,7 @@ class AlbumSongs extends StatelessWidget {
 class MyDelegate extends SliverPersistentHeaderDelegate {
   late AlbumModel albumModel;
   MyDelegate({required this.albumModel});
+
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
@@ -167,6 +169,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
                               onPressed: () {
@@ -181,12 +184,15 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           ),
                           // Flexible(
                           //   child:
-                          Opacity(
-                            opacity: shrinkPercentage,
-                            child: UiHelper.customText(albumModel.albumname,
-                                fontweight: FontWeight.bold,
-                                fontsize: 20,
-                                color: Colors.white),
+                          Flexible(
+                            child: Opacity(
+                              opacity: shrinkPercentage,
+                              child: UiHelper.customText(
+                                  albumModel.albumname,
+                                  fontweight: FontWeight.bold,
+                                  fontsize: 20,
+                                  color: Colors.white),
+                            ),
                           ),
                           // ),
                         ],
@@ -196,13 +202,13 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
 
                   Opacity(
                     opacity: max(1 - shrinkPercentage * 6, 0),
-                    // opacity: max(1 - shrinkPercentage * 6, 0),
                     child: Column(
                       children: [
                         SizedBox(height: 70),
-                        UiHelper.customText(albumModel.albumname,
+                        UiHelper.customText(
+                            albumModel.albumname,
                             fontweight: FontWeight.bold,
-                            fontsize: 60,
+                            fontsize: 50,
                             color: Colors.white),
                       ],
                     ),
@@ -214,6 +220,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
         ),
       ],
     );
+
   }
 
   @override

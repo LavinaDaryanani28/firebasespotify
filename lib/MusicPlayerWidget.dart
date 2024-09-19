@@ -89,12 +89,12 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        UiHelper.customText(
+        Flexible(child: UiHelper.customText(
           audioPlayerModel.currentSongName ?? '',
           color: Colors.white,
           fontweight: FontWeight.bold,
           fontsize: 30,
-        ),
+        )),
         UiHelper.iconBtn(
           30,
           // Change the icon depending on whether the song is already liked or not
