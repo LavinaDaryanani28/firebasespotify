@@ -42,32 +42,18 @@ class AlbumSongs extends StatelessWidget {
               delegate: SliverChildBuilderDelegate(
                     (context, index)
                     {return Padding(
+
                     padding: const EdgeInsets.only(left: 15, top: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Spacer(),
-                            UiHelper.iconBtn(25,
-                                color: Colors.white,
-                                icondata: Icons.shuffle,
-                                callback: () {}),
-                            UiHelper.iconBtn(35,
-                                color: Colors.white,
-                                icondata: Icons.play_circle,
-                                callback: () {}),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
                         UiHelper.customText("Album Songs",
                             color: Colors.white, fontsize: 25),
                         ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemBuilder: (context, index) {
+                            bool isSongPlaying = audioPlayerModel.currentSongUrl == albumsongs[index].url && audioPlayerModel.isPlaying;
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
@@ -87,9 +73,21 @@ class AlbumSongs extends StatelessWidget {
                                           color: Colors.white,fontsize: 15)),
                                     // Spacer(),
                                       IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(Icons.more_vert),
-                                        color: Colors.white,
+                                        icon: Icon(
+                                          isSongPlaying ? Icons.pause : Icons.play_arrow,
+                                          color: Colors.white,
+                                          size: 30,
+                                        ),
+                                        onPressed: () {
+                                          if (isSongPlaying && audioPlayerModel.currentSongName == albumsongs[index].songname) {
+                                            // If the song is already playing, pause it
+                                            audioPlayerModel.pause();
+                                          } else {
+                                            // Play the selected song
+                                            audioPlayerModel.setCurrentSongFromAlbum(albumsongs, index);
+                                            audioPlayerModel.play();
+                                          }
+                                        },
                                       ),
                                     ],
                                   ),

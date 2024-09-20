@@ -125,15 +125,6 @@ class Artist extends StatelessWidget {
                                     builder: (context) => ArtistAlbums(
                                         artistModel: artistModel)));
                           }),
-                          Spacer(),
-                          UiHelper.iconBtn(25,
-                              color: Colors.white,
-                              icondata: Icons.shuffle,
-                              callback: () {}),
-                          UiHelper.iconBtn(35,
-                              color: Colors.white,
-                              icondata: Icons.play_circle,
-                              callback: () {}),
                         ],
                       ),
                       SizedBox(
@@ -145,6 +136,7 @@ class Artist extends StatelessWidget {
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemBuilder: (context, index) {
+                          bool isSongPlaying = audioPlayerModel.currentSongUrl == artistSongs[index].url && audioPlayerModel.isPlaying;
                           return ListTile(
                             title: Container(
                               height: 50,
@@ -176,10 +168,22 @@ class Artist extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            trailing: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.more_vert),
-                              color: Colors.white,
+                            trailing:  IconButton(
+                              icon: Icon(
+                                isSongPlaying ? Icons.pause : Icons.play_arrow,
+                                color: Colors.white,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                if (isSongPlaying && audioPlayerModel.currentSongName == artistSongs[index].songname) {
+                                  // If the song is already playing, pause it
+                                  audioPlayerModel.pause();
+                                } else {
+                                  // Play the selected song
+                                  audioPlayerModel.setCurrentSongFromAlbum(artistSongs, index);
+                                  audioPlayerModel.play();
+                                }
+                              },
                             ),
                           );
                         },

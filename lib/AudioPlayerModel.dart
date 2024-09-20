@@ -477,7 +477,30 @@ class AudioPlayerModel with ChangeNotifier {
       await playCurrentSong();
     }
   }
+  void setCurrentSongFromAlbum(List<Song> albumSongs, int index) {
+    _songs = albumSongs; // Update the list of songs to only album songs
+    setCurrentSong(index); // Set the song at the selected index
+  }
+  Future<void> playAlbumSongs(List<Song> albumSongs) async {
+    // Set the songs to the album songs
+    _songs = albumSongs;
+    _shuffledSongs = albumSongs; // If shuffle is on
+    currentIndex = 0; // Start from the first song
 
+    // Play the first song
+    await playCurrentSong();
+  }
+  void setCurrentSong(int index) {
+    if (index >= 0 && index < songs.length) {
+      currentIndex = index;
+      _currentSongUrl = songs[currentIndex].url;
+      _currentSongName = songs[currentIndex].songname;
+      _currentSongPhoto = songs[currentIndex].photo;
+      _currentSongArtist = songs[currentIndex].artist;
+      _currentSongAlbum = songs[currentIndex].album;
+      notifyListeners();
+    }
+  }
   Future<void> playCurrentSong() async {
     if (_songs.isNotEmpty) {
       final song = songs[currentIndex];
@@ -489,7 +512,6 @@ class AudioPlayerModel with ChangeNotifier {
       notifyListeners();
     }
   }
-
   Future<void> stopCurrentSong() async {
     await _audioPlayer.stop();
   }
