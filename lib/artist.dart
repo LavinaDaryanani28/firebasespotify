@@ -97,7 +97,7 @@ class Artist extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       image: DecorationImage(
                                         image: NetworkImage(
-                                            "https://m.media-amazon.com/images/I/610FLv2T1QL._AC_UF1000,1000_QL80_.jpg"),
+                                            artistModel.photo),
                                         fit: BoxFit.cover,
                                       ),
                                       borderRadius: BorderRadius.only(
@@ -151,13 +151,6 @@ class Artist extends StatelessWidget {
                               width: 50,
                               child: Row(
                                 children: [
-                                  UiHelper.customText((index + 1).toString(),
-                                      color: Colors.white,
-                                      fontsize: 15,
-                                      fontweight: FontWeight.bold),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
                                   Image.network(
                                     artistSongs[index].photo,
                                     // arrContent[index]["image"].toString()
@@ -187,38 +180,6 @@ class Artist extends StatelessWidget {
                       ),
                       SizedBox(
                         height: 20,
-                      ),
-                      UiHelper.customText("Popular releases",
-                          color: Colors.white, fontsize: 25),
-                      ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Container(
-                              height: 50,
-                              width: 50,
-                              child: Row(
-                                children: [
-                                  Image.network(
-                                    arrContent[index]["image"].toString()
-                                        as String,
-                                    height: 70,
-                                    width: 70,
-                                    fit: BoxFit.fill,
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  UiHelper.customText(
-                                      arrContent[index]["songname"].toString(),
-                                      color: Colors.white),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                        itemCount: arrContent.length,
                       ),
                       Container(
                         child: Text("About"),

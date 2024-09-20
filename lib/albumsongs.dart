@@ -19,29 +19,38 @@ final borderside = BorderSide(color: Colors.white, width: 2);
 class AlbumSongs extends StatelessWidget {
   final AlbumModel albumModel;
   final String? artistname;
-  AlbumSongs({required this.albumModel,this.artistname});
+  AlbumSongs({required this.albumModel, this.artistname});
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
-
-    List<Song> albumsongs = audioPlayerModel.songs.where((el)=>el.album.toLowerCase() == albumModel.albumname.toLowerCase() && el.artist.toLowerCase() == artistname!.toLowerCase()).toList();
-
+    List<Song> albumsongs;
+    if (artistname is Null) {
+      albumsongs = audioPlayerModel.songs
+          .where((el) =>
+              el.album.toLowerCase() == albumModel.albumname.toLowerCase())
+          .toList();
+    } else {
+      albumsongs = audioPlayerModel.songs
+          .where((el) =>
+              el.album.toLowerCase() == albumModel.albumname.toLowerCase() &&
+              el.artist.toLowerCase() == artistname!.toLowerCase())
+          .toList();
+    }
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
             SliverPersistentHeader(
-              delegate: MyDelegate(albumModel:albumModel!),
+              delegate: MyDelegate(albumModel: albumModel!),
               floating: true,
               pinned: true,
             ),
-
             SliverList(
               delegate: SliverChildBuilderDelegate(
-                    (context, index)
-                    {return Padding(
+                (context, index) {
+                  return Padding(
                     padding: const EdgeInsets.only(left: 15, top: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,28 +80,29 @@ class AlbumSongs extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
-                                    children: [
-                                      Image.network(
-                                        height: 70,
-                                        width: 70,
-                                        albumsongs[index].photo,
-                                        fit: BoxFit.fill,
-                                      ),
-                                      SizedBox(
-                                        width: 15,
-                                      ),
-                                      Expanded(child:
-                                      UiHelper.customText(
-                                          albumsongs[index].songname,
-                                          color: Colors.white,fontsize: 15)),
-                                    // Spacer(),
-                                      IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(Icons.more_vert),
-                                        color: Colors.white,
-                                      ),
-                                    ],
+                                children: [
+                                  Image.network(
+                                    height: 70,
+                                    width: 70,
+                                    albumsongs[index].photo,
+                                    fit: BoxFit.fill,
                                   ),
+                                  SizedBox(
+                                    width: 15,
+                                  ),
+                                  Expanded(
+                                      child: UiHelper.customText(
+                                          albumsongs[index].songname,
+                                          color: Colors.white,
+                                          fontsize: 15)),
+                                  // Spacer(),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.more_vert),
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
                             );
                           },
                           itemCount: albumsongs.length,
@@ -119,7 +129,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     var shrinkPercentage =
-    min(1, shrinkOffset / (maxExtent - minExtent)).toDouble();
+        min(1, shrinkOffset / (maxExtent - minExtent)).toDouble();
 
     return Stack(
       clipBehavior: Clip.hardEdge,
@@ -140,12 +150,12 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                 child: Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                        fit: BoxFit.fitWidth,
-                        alignment: FractionalOffset.topCenter,
-                        image: NetworkImage(
-                          albumModel.photo,
-                        ),
-                      )),
+                    fit: BoxFit.fitWidth,
+                    alignment: FractionalOffset.topCenter,
+                    image: NetworkImage(
+                      albumModel.photo,
+                    ),
+                  )),
                 ),
               ),
             ],
@@ -187,8 +197,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           Flexible(
                             child: Opacity(
                               opacity: shrinkPercentage,
-                              child: UiHelper.customText(
-                                  albumModel.albumname,
+                              child: UiHelper.customText(albumModel.albumname,
                                   fontweight: FontWeight.bold,
                                   fontsize: 20,
                                   color: Colors.white),
@@ -205,8 +214,7 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     child: Column(
                       children: [
                         SizedBox(height: 70),
-                        UiHelper.customText(
-                            albumModel.albumname,
+                        UiHelper.customText(albumModel.albumname,
                             fontweight: FontWeight.bold,
                             fontsize: 50,
                             color: Colors.white),
@@ -220,7 +228,6 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
         ),
       ],
     );
-
   }
 
   @override
