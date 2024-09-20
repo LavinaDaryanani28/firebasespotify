@@ -10,12 +10,9 @@ import 'package:spotifyfirebase/uihelper.dart';
 import 'login.dart';
 
 class Signin extends StatefulWidget {
-  const Signin({super.key});
-
+  // const Signin({super.key});
 
   @override
-
-
   State<Signin> createState() => _SigninState();
 }
 
