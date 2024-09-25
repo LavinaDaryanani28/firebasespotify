@@ -1,20 +1,10 @@
-import 'dart:developer';
-import 'dart:math';
-
-import 'package:audioplayers/audioplayers.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:spotifyfirebase/AudioPlayerModel.dart';
 import 'package:spotifyfirebase/MiniPlayerWidget.dart';
-import 'package:spotifyfirebase/MusicPlayerWidget.dart';
 import 'package:spotifyfirebase/home.dart';
 import 'package:spotifyfirebase/library.dart';
-import 'package:spotifyfirebase/musicPlayer.dart';
-import 'package:spotifyfirebase/player.dart';
 import 'package:spotifyfirebase/settings.dart';
-
 import 'Search.dart';
+
 enum RepeatMode {
   noRepeat,
   repeatOne,
@@ -36,13 +26,13 @@ class _NavigationbarState extends State<NavBar> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     List<Widget> _pages = [
       Home(),
       Library(),
       Search(),
       Setting(),
-
     ];
 
     return Scaffold(
@@ -50,13 +40,11 @@ class _NavigationbarState extends State<NavBar> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // miniPlayer(),
           MiniPlayerWidget(),
           BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             unselectedLabelStyle: const TextStyle(fontSize: 14),
             selectedItemColor: Colors.green ,
-            // fixedColor: Colors.white,
             unselectedItemColor: Colors.white,
             currentIndex: _selectedIndex,
             onTap: _onItemTapped,
@@ -84,5 +72,4 @@ class _NavigationbarState extends State<NavBar> {
       ),
     );
   }
-
 }

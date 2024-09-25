@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotifyfirebase/signup.dart';
@@ -49,9 +50,7 @@ class UiHelper {
       Color? bordercolor,
       VoidCallback? callback]) {
     return OutlinedButton(
-      onPressed: () {
-        // callback!();
-      },
+      onPressed: () {},
       child: Row(children: [
         Padding(
           padding:
@@ -97,7 +96,6 @@ class UiHelper {
                 ? BorderRadius.circular(borderradius)
                 : BorderRadius.circular(0.0),
           )),
-      // onTap: callback,
     );
   }
 
@@ -117,13 +115,12 @@ class UiHelper {
   }
 
   static CustomAlertBox(BuildContext context, String text,
-      {String? alertbtn, Signin? navigateTo, VoidCallback? callback}) {
+      {String? alertbtn, dynamic? navigateTo, VoidCallback? callback}) {
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: Text(text),
-            // content: ,
             actions: alertbtn == "logout" || alertbtn == "createPlaylist"
                 ? [
                     TextButton(
@@ -138,6 +135,7 @@ class UiHelper {
                               SharedPreferences preferences =
                                   await SharedPreferences.getInstance();
                               await preferences.clear();
+                              await FirebaseAuth.instance.signOut();
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -149,7 +147,6 @@ class UiHelper {
                             ? TextButton(
                                 onPressed: () {
                                   callback!();
-                                  // Navigator.of(context).pop();
                                 },
                                 child: Text('Ok'),
                               )
@@ -162,30 +159,6 @@ class UiHelper {
                         },
                         child: Text("ok"))
                   ],
-
-            // TextButton(
-            //           onPressed: () {
-            //             Navigator.of(context).pop();
-            //           },
-            //           child: Text('Cancel'),
-            //         ),
-            //         TextButton(
-            //           onPressed: () async{
-            //             SharedPreferences preferences = await SharedPreferences.getInstance();
-            //             await preferences.clear();
-            //             Navigator.push(
-            //                 context,
-            //                 MaterialPageRoute(
-            //                     builder: (context) => Signin()));
-            //           },
-            //           child: Text('OK'),
-            //         ),
-
-            // actions: [
-            //   TextButton(onPressed: (){
-            //     Navigator.pop(context);
-            //   }, child: Text("ok"))
-            // ],
           );
         });
   }
@@ -227,26 +200,9 @@ class UiHelper {
       onTap: () {
         callback!();
       },
-      // onTap: callback,
     );
   }
 
-  // static customListTile(String text,Color color,double fontsize,{VoidCallback? callback,double? width,bool? isSwitched,VoidCallback? callbackChange}){
-  //   return ListTile(
-  //       title:Row(
-  //         children: [
-  //           UiHelper.customText(text,color: color,fontsize: fontsize),
-  //           UiHelper.customSizebox(width: width),
-  //           Switch(value: isSwitched!,
-  //             onChanged: (bool value){callbackChange!();},
-  //             activeTrackColor: Colors.lightGreenAccent,
-  //             activeColor: Colors.green,
-  //           )
-  //         ],
-  //       )
-  //     // onTap: callback,
-  //   );
-  // }
   static iconBtn(double IconSize,
       {Color? color,
       IconData? icondata,

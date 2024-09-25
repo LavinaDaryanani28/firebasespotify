@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spotifyfirebase/AudioPlayerModel.dart';
@@ -13,7 +11,7 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   String _searchQuery = '';
-  bool _isSearching = false;
+  // bool _isSearching = false;
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
@@ -28,18 +26,25 @@ class _SearchState extends State<Search> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: TextField(
-          decoration: InputDecoration(
-            labelText: 'Search Songs',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-            prefixIcon: Icon(Icons.search),
+        toolbarHeight: 100,
+        automaticallyImplyLeading: false,
+        flexibleSpace: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SafeArea(
+            child: TextField(
+              decoration: InputDecoration(
+                labelText: 'Search Songs',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                prefixIcon: Icon(Icons.search),
+              ),
+              onChanged: (query) {
+                setState(() {
+                  _searchQuery = query;
+                  // _isSearching = query.isNotEmpty;
+                });
+              },
+            ),
           ),
-          onChanged: (query) {
-            setState(() {
-              _searchQuery = query;
-              _isSearching = query.isNotEmpty;
-            });
-          },
         ),
       ),
       body: ListView.builder(

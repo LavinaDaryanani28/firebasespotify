@@ -1,16 +1,10 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:spotifyfirebase/AlbumModel.dart';
 import 'package:spotifyfirebase/AudioPlayerModel.dart';
 import 'package:spotifyfirebase/Song.dart';
 import 'package:spotifyfirebase/uihelper.dart';
-
-import 'ArtistModel.dart';
-import 'artist.dart';
 
 double _appTopBarHeight = 40;
 
@@ -24,7 +18,7 @@ class AlbumSongs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audioPlayerModel = Provider.of<AudioPlayerModel>(context);
-    List<Song> albumsongs=[];
+    List<Song> albumsongs = [];
     if (artistname is Null) {
       albumsongs = audioPlayerModel.songs
           .where((el) =>
@@ -99,7 +93,6 @@ class AlbumSongs extends StatelessWidget {
                                           albumsongs[index].songname,
                                           color: Colors.white,
                                           fontsize: 15)),
-                                  // Spacer(),
                                   IconButton(
                                     onPressed: () {
                                       if (isSongPlaying &&
@@ -162,7 +155,6 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                 height: 40,
               ),
               Opacity(
-                // opacity: .2,
                 opacity: 1 - shrinkPercentage,
                 child: Container(
                   decoration: BoxDecoration(
@@ -196,7 +188,6 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
                               onPressed: () {
@@ -209,8 +200,6 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                           SizedBox(
                             width: 20,
                           ),
-                          // Flexible(
-                          //   child:
                           Flexible(
                             child: Opacity(
                               opacity: shrinkPercentage,
@@ -220,7 +209,6 @@ class MyDelegate extends SliverPersistentHeaderDelegate {
                                   color: Colors.white),
                             ),
                           ),
-                          // ),
                         ],
                       ),
                     ),

@@ -1,11 +1,8 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:spotifyfirebase/artist.dart';
 import 'package:spotifyfirebase/uihelper.dart';
-
 import 'AudioPlayerModel.dart';
 
 class LikedSongs extends StatefulWidget {
@@ -24,6 +21,7 @@ class _LikedSongsState extends State<LikedSongs> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         toolbarHeight: 40.0.h,
+        foregroundColor: Colors.white,
       ),
       body: Container(
         child: SingleChildScrollView(
@@ -47,12 +45,11 @@ class _LikedSongsState extends State<LikedSongs> {
                   itemCount: audioPlayerModel.likedSongs.length,
                   itemBuilder: (context, index) {
                     final song = audioPlayerModel.likedSongs[index];
-                    log(song.toString());
                     return ListTile(
-                      leading: Icon(Icons.music_note),
-                      title: Text(song.songname),
-                      // subtitle: Text(song.artist),
+                      leading: Icon(Icons.music_note,color: Colors.white,),
+                      title: UiHelper.customText(song.songname,color: Colors.white),
                       onTap: () {
+                        log("liked song : "+song.songname);
                         // Update the current song and play it when tapped
                         audioPlayerModel.currentIndex =
                             index; // Update current song index
@@ -75,7 +72,6 @@ class _LikedSongsState extends State<LikedSongs> {
         ),
       ),
       backgroundColor: Colors.black,
-      // floatingActionButton: floatingActionItem,
     );
   }
 }

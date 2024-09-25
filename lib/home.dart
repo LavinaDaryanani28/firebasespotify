@@ -1,13 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:spotifyfirebase/artistalbums.dart';
 import 'package:spotifyfirebase/albumsongs.dart';
 import 'package:spotifyfirebase/artist.dart';
 import 'package:spotifyfirebase/uihelper.dart';
-
 import 'AudioPlayerModel.dart';
 
 class Home extends StatefulWidget {
@@ -19,7 +15,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String _searchQuery = '';
-  bool _isSearching = false;
   String greetings() {
     DateTime now = DateTime.now();
     int hours = now.hour;
@@ -44,6 +39,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         toolbarHeight: 80.0.h, //set your height
+        automaticallyImplyLeading: false,
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
@@ -55,120 +51,6 @@ class _HomeState extends State<Home> {
                       color: Colors.white,
                       fontsize: 30,
                       fontweight: FontWeight.bold),
-                  // SizedBox(
-                  //   height: 10,
-                  // ),
-                  // Column(
-                  //   children:[ TextField(
-                  //       decoration: InputDecoration(
-                  //         labelText: 'Search',
-                  //         border: OutlineInputBorder(
-                  //             borderRadius: BorderRadius.circular(20)),
-                  //         prefixIcon: Icon(Icons.search),
-                  //       ),
-                  //       onChanged:  (query) {
-                  //         setState(() {
-                  //           _searchQuery = query;
-                  //           _isSearching = query.isNotEmpty;
-                  //         });
-                  //         // Call the search function whenever the query changes
-                  //         audioPlayerModel.searchSongs(query);
-                  //       },
-                  //     ),
-                  //     if (_isSearching && audioPlayerModel.searchResults.isNotEmpty)
-                  //     ListView.builder(
-                  //       itemCount: filteredSongs.length,
-                  //       itemBuilder: (context, index) {
-                  //         final song = filteredSongs[index];
-                  //         return ListTile(
-                  //           title: Text(song.songname, style: TextStyle(color: Colors.white)),
-                  //           subtitle: Text(song.artist, style: TextStyle(color: Colors.grey)),
-                  //           onTap: () {
-                  //             audioPlayerModel.currentIndex = index;
-                  //             audioPlayerModel.playCurrentSong();
-                  //           },
-                  //         );
-                  //       },
-                  //     ),
-                      // if (_isSearching && audioPlayerModel.searchResults.isNotEmpty)
-                      //   // Expanded(
-                      //   //     child: ListView.builder(
-                      //   //       itemCount: audioPlayerModel.searchResults.length,
-                      //   //       itemBuilder: (context, index) {
-                      //   //         final song = audioPlayerModel.searchResults[index];
-                      //   //         return ListTile(
-                      //   //           title: Text(song['songname']),
-                      //   //           onTap: () {
-                      //   //             // Play the selected song
-                      //   //             audioPlayerModel.playCurrentSong(); // Play the song URL
-                      //   //             setState(() {
-                      //   //               _searchQuery = song['songname'];
-                      //   //               _isSearching = false;
-                      //   //             });
-                      //   //           },
-                      //   //         );
-                      //   //       },
-                      //   //     ),
-                      //   // ),
-                      //   DropdownButton<String>(
-                      //     items: audioPlayerModel.searchResults.map((song) {
-                      //
-                      //       final songName = song['songname'];
-                      //       // Debugging: Check if the song name is correctly fetched
-                      //       log('Song found: $songName');
-                      //       return DropdownMenuItem<String>(
-                      //         value: song['songname'],
-                      //         child: Text(song['songname']??"Unknown song",style: TextStyle(color: Colors.white),),
-                      //       );
-                      //     }).toList(),
-                      //     onChanged: (value) {
-                      //       setState(() {
-                      //         _searchQuery = value!;
-                      //         _isSearching = false;
-                      //       });
-                      //       audioPlayerModel.playCurrentSong();
-                      //     },
-                      //     isExpanded: true,
-                      //     hint: Text("Select a song",style: TextStyle(color: Colors.black),),
-                      //     dropdownColor: Colors.grey[900], // Set dropdown background color
-                      //     icon: Icon(
-                      //       Icons.arrow_drop_down,
-                      //       color: Colors.white,         // Set dropdown icon color
-                      //       size: 24,                    // Set icon size
-                      //     ),
-                      //     style: TextStyle(
-                      //       color: Colors.white,         // Set selected text color
-                      //       fontSize: 16.0,              // Set selected text font size
-                      //     ),
-                      //     underline: Container(
-                      //       height: 2,
-                      //       color: Colors.white,         // Set underline color
-                      //     ),
-                      //     borderRadius: BorderRadius.circular(12), // Set dropdown item border radius
-                      //     iconEnabledColor: Colors.white,          // Color of the dropdown arrow when enabled
-                      //     iconDisabledColor: Colors.grey,
-                      //   ),
-                      //
-                      // // Hide this message if searching
-                      // if (_isSearching && audioPlayerModel.searchResults.isEmpty)
-                      //   Center(child: Text('No songs found')),
-                  // if (!_isSearching)
-                  //   Expanded(
-                  //     child: ListView.builder(
-                  //       itemCount: audioPlayerModel.songs.length,
-                  //       itemBuilder: (context, index) {
-                  //         final song = audioPlayerModel.songs[index];
-                  //         return ListTile(
-                  //           title: Text(song.songname),
-                  //           onTap: () {
-                  //             // Play the song when tapped
-                  //             audioPlayerModel.playCurrentSong();
-                  //           },
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ],),
                 ],
               ),
             ),
@@ -176,14 +58,6 @@ class _HomeState extends State<Home> {
         ),
       ),
       body: Container(
-        // decoration: const BoxDecoration(
-        //     gradient: LinearGradient(
-        //       begin: Alignment.topLeft,
-        //       end: Alignment.center,
-        //       colors:
-        //     [Color(0xff7f4053),Colors.black38],
-        //     )
-        // ),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Padding(
@@ -263,13 +137,11 @@ class _HomeState extends State<Home> {
                               MaterialPageRoute(builder: (context) => AlbumSongs(albumModel:album)));
                         },
                         child: Container(
-                          // color: Colors.grey,
                           height: double.infinity,
                           width: 115,
                           child: Padding(
                             padding: const EdgeInsets.only(
                                 top: 8.0, left: 8.0, bottom: 8.0),
-                            // color: Colors.white,
                             child: Column(
                               children: [
                                 Image.network(
@@ -338,14 +210,12 @@ class _HomeState extends State<Home> {
                     );
                   },
                 ),
-
               ],
             ),
           ),
         ),
       ),
       backgroundColor: Colors.black,
-      // floaingActionButton: floatingActionItem,
     );
   }
 }

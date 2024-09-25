@@ -1,18 +1,9 @@
 import 'dart:developer';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:spotifyfirebase/AudioPlayerModel.dart';
-import 'package:spotifyfirebase/Song.dart';
 import 'package:spotifyfirebase/uihelper.dart';
-
-// enum RepeatMode {
-//   noRepeat,
-//   repeatOne,
-//   repeatAll,
-// }
 
 class MusicPlayerWidget extends StatefulWidget {
   @override
@@ -20,7 +11,6 @@ class MusicPlayerWidget extends StatefulWidget {
 }
 
 class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
-  bool _isPlaying = false;
   late Duration duration;
   late Duration position;
   late String url;
@@ -89,7 +79,8 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Flexible(child: UiHelper.customText(
+        Flexible(
+            child: UiHelper.customText(
           audioPlayerModel.currentSongName ?? '',
           color: Colors.white,
           fontweight: FontWeight.bold,
@@ -98,18 +89,19 @@ class _MusicPlayerWidgetState extends State<MusicPlayerWidget> {
         UiHelper.iconBtn(
           30,
           // Change the icon depending on whether the song is already liked or not
-          icondata: audioPlayerModel.likedSongs.any((song) =>
-          song.songname == audioPlayerModel.currentSongName)
+          icondata: audioPlayerModel.likedSongs.any(
+                  (song) => song.songname == audioPlayerModel.currentSongName)
               ? Icons.remove_circle_outline_outlined
               : Icons.add_circle_outline_outlined,
           color: Colors.white,
           callback: () async {
             // Check if the current song is already in the liked songs list
-            bool isAlreadyLiked = audioPlayerModel.likedSongs.any((song) =>
-            song.songname == audioPlayerModel.currentSongName);
-log(isAlreadyLiked.toString());
+            bool isAlreadyLiked = audioPlayerModel.likedSongs.any(
+                (song) => song.songname == audioPlayerModel.currentSongName);
+            log(isAlreadyLiked.toString());
             if (isAlreadyLiked) {
-              await audioPlayerModel.removeSongFromLiked(audioPlayerModel.currentSongName);
+              await audioPlayerModel
+                  .removeSongFromLiked(audioPlayerModel.currentSongName);
             } else {
               // Add the song if it's not in the liked list
               await audioPlayerModel.addCurrentSongToLiked();
